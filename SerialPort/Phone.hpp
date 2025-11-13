@@ -17,6 +17,7 @@ class Phone
 		void requestOperatorInfo();
 		void requestConnectionStatus();
 		void requestSignalStrength();
+        void setVoiceHangupControl();
 		void parseResponse(std::string &str);
 		void answer();
 		void disconnect();

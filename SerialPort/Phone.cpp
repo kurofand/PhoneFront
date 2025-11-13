@@ -44,6 +44,11 @@ void Phone::hangUp()
 	port_->writeToPort("AT+CHUP\r\n");
 }
 
+void Phone::setVoiceHangupControl()
+{
+    port_->writeToPort("AT+CVHU=0\r\n");
+}
+
 //TODO: maybe add AT+CPAS command to get current call status
 
 void Phone::parseResponse(std::string &str)

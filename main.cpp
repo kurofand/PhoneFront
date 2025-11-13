@@ -94,6 +94,8 @@ int main(int argc, char *argv[])
         phone->engine(&engine);
         std::thread tListen(listen, phone);
         tListen.detach();
+        phone->setVoiceHangupControl();
+        sleep(1);
         phone->requestNumber();
         sleep(1);
         phone->requestSignalStrength();
