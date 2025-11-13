@@ -1,0 +1,72 @@
+import QtQuick 2.15
+import QtQuick.Controls
+import QtQuick.Layouts
+
+Dialog
+{
+	x: (parent.width-width)/2
+	y: (parent.height-height)/2
+	modal: true
+	padding: 20
+	closePolicy: Popup.CloseOnEscape
+
+	property string number: "080xxxxxx56"
+
+	ColumnLayout
+	{
+		anchors.fill: parent
+		spacing: 10
+
+		RowLayout
+		{
+			Text
+			{
+				id: tCallStatus
+				Layout.alignment: Qt.AlignHCenter
+				font.pointSize: 15
+				text: "Calling..."
+			}
+			Text
+			{
+				id: tCallTime
+				Layout.alignment: Qt.AlignHCenter
+				font.pointSize: 15
+				text: "00:00"
+			}
+		}
+		Text
+		{
+			id: tNumber
+			Layout.alignment: Qt.AlignHCenter
+			font.pointSize: 20
+			text: number
+		}
+		RoundButton
+		{
+			id: button
+			implicitWidth: 180
+			implicitHeight: 50
+			radius: 50
+
+			background: Rectangle
+			{
+				radius: 50
+				color: button.down?"#500":"#F00"
+			}
+
+			contentItem: Text
+			{
+				text: "🕿"
+				horizontalAlignment: Text.AlignHCenter
+				verticalAlignment: Text.AlignVCenter
+				font.pointSize: 20
+			}
+
+			onClicked:
+			{
+				connector.reject();
+				close();
+			}
+		}
+	}
+}
