@@ -165,6 +165,7 @@ void Phone::parseResponse(std::string &str)
             auto *dIncomingCall=window->findChild<QObject*>("dIncomingCall");
             if(dIncomingCall)
             {
+                std::cout<<"dialog found"<<std::endl;
                 auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
                 tIncomingNumber->setProperty("text", currentCall_->number()->c_str());
                 QMetaObject::invokeMethod(dIncomingCall, "open");

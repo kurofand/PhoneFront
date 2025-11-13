@@ -71,8 +71,13 @@ Window
     }
 
     DialDialog{id: dDial}
-    IncomingCallDialog{id: dIncomingCall}
+    IncomingCallDialog{id: dIncomingCall; objectName: "dIncomingCall"}
     CallDialog{id: dCall}
     QMLConnector{id: connector}
+
+    /*function open()
+    {
+        dIncomingCall.open();
+    }*/
 
 }
