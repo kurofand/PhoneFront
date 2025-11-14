@@ -25,4 +25,14 @@ std::unordered_map<uint8_t, const char*> callNumberType=
 	{129,"Otherwise"}
 };
 
+std::unordered_map<ConnectionStatus, const char*> connectionStatus=
+{
+    {ConnectionStatus::NO_REG_NO_SEARCH,"Not registered, not currently searching a new operator"},
+    {ConnectionStatus::REG,"Registered, home nerwork"},
+    {ConnectionStatus::NO_REG_SEARCH,"Not registered, currently searching a new operator"},
+    {ConnectionStatus::REG_DECLINED,"Registration denied"},
+    {ConnectionStatus::UNKNOWN,"Unknown"},
+    {ConnectionStatus::ROAMING,"Roaming"}
+};
+
 #endif

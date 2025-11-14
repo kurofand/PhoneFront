@@ -28,6 +28,7 @@ class Phone
 		SerialPort* port(){return port_;}
         ~Phone(){};
 	private:
+        QObject* findQMLObj(const char* objName);
         inline static Phone *instance=nullptr;
         SerialPort *port_=nullptr;
 		std::string number_;

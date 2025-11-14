@@ -93,6 +93,9 @@ void Phone::parseResponse(std::string &str)
 					break;
 				}
 			std::cout<<"parsed successfully. Result:"<<signalStrength_<<std::endl;
+            auto *tSignalStrength=findQMLObj("tSignalStrength");
+            if(tSignalStrength)
+                tSignalStrength->setProperty("text", signalStrength_);
 			break;
 		}
 		case ATResponse::CNUM:
@@ -116,6 +119,9 @@ void Phone::parseResponse(std::string &str)
 				arr[i++]=line;
 			operatorName_=arr[3];
 			std::cout<<"parsed successfully. Result:"<<operatorName_<<std::endl;
+            auto *tProvider=findQMLObj("tProvider");
+            if(tProvider)
+                tProvider->setProperty("text", operatorName_.c_str());
 			break;
 		}
 		case ATResponse::CREG:
@@ -127,6 +133,9 @@ void Phone::parseResponse(std::string &str)
 			if(responseStr.size()==3)
 			{
 				status_=static_cast<ConnectionStatus>(responseStr[0]);
+                auto *tStatus=findQMLObj("tConnectionStatus");
+                if(tStatus)
+                    tStatus->setProperty("text", connectionStatus.at(status_));
 				connectionType_=static_cast<ConnectionType>(responseStr[2]);
 				std::cout<<"parsed successfully. Result:"<<static_cast<uint8_t>(status_)<<", "<<static_cast<uint8_t>(connectionType_)<<std::endl;
 			}
@@ -164,10 +173,7 @@ void Phone::parseResponse(std::string &str)
 
             currentCall_->number(arr[5].substr(1, arr[5].size()-2));
 
-
-
-            auto *window=engine_->rootObjects().first();
-            auto *dIncomingCall=window->findChild<QObject*>("dIncomingCall");
+            auto *dIncomingCall=findQMLObj("dIncomingCall");
             if(dIncomingCall)
             {
                 std::cout<<"dialog found"<<std::endl;
@@ -189,6 +195,9 @@ void Phone::parseResponse(std::string &str)
             {
                 delete currentCall_;
                 currentCall_=nullptr;
+                auto *dCall=findQMLObj("dCall");
+                if(dCall)
+                    QMetaObject::invokeMethod(dCall, "close");
             }
             break;
         }
@@ -218,6 +227,16 @@ RING
 
 MISSED_CALL: 11:53AM 08020866256
 */
+}
+
+QObject* Phone::findQMLObj(const char* objName)
+{
+    if(!engine_)
+        return nullptr;
+    auto *window=engine_->rootObjects().first();
+    if(!window)
+        return nullptr;
+    return window->findChild<QObject*>(objName);
 }
 
 Phone* Phone::getInstance()

@@ -72,7 +72,7 @@ Window
 
     DialDialog{id: dDial}
     IncomingCallDialog{id: dIncomingCall; objectName: "dIncomingCall"}
-    CallDialog{id: dCall}
+    CallDialog{id: dCall; objectName: "dCall"}
     QMLConnector{id: connector}
 
     /*function open()
