@@ -127,12 +127,16 @@ void Phone::parseResponse(std::string &str)
 		case ATResponse::CREG:
 		{
 			std::cout<<"Response to CREG request...";
+            //erase OK\r\n
+            std::erase(responseStr, '\r');
+            std::erase(responseStr, '\n');
+            responseStr.erase(responseStr.end()-2, responseStr.end());
 //usual response something like " 0,0", space at the beginning cutted above
 //so if size differs from 3 something went wrong
 //TODO: handle cases when size differs from 3
 			if(responseStr.size()==3)
 			{
-                status_=static_cast<ConnectionStatus>(responseStr[2]);
+                status_=static_cast<ConnectionStatus>(responseStr[2]-'0');
                 auto *tStatus=findQMLObj("tConnectionStatus");
                 if(tStatus)
                     tStatus->setProperty("text", connectionStatus.at(status_));

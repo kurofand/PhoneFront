@@ -4,11 +4,11 @@
 enum class ConnectionStatus
 {
 	NO_REG_NO_SEARCH=0,
-	REG,
-	NO_REG_SEARCH,
-	REG_DECLINED,
-	UNKNOWN,
-	ROAMING
+    REG,
+    NO_REG_SEARCH,
+    REG_DECLINED,
+    UNKNOWN,
+    ROAMING
 };
 
 enum class ConnectionType
