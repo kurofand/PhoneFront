@@ -11,6 +11,8 @@ Dialog
 	closePolicy: Popup.CloseOnEscape
 
 	property string number: "080xxxxxx56"
+	property string sec: "00"
+	property string min: "00"
 
 	ColumnLayout
 	{
@@ -31,7 +33,7 @@ Dialog
 				id: tCallTime
 				Layout.alignment: Qt.AlignHCenter
 				font.pointSize: 15
-				text: "00:00"
+				text: min+":"+sec
 			}
 		}
 		Text
@@ -65,8 +67,34 @@ Dialog
 			onClicked:
 			{
 				connector.reject();
+				tiCallTime.stop();
+				sec="00";
+				min="00";
 				close();
 			}
 		}
+	}
+
+	Timer
+	{
+		id: tiCallTime
+		running: false; repeat: true
+		onTriggered:
+		{
+			sec=prepareVal(++sec);
+			if(sec==60)
+			{
+				sec="00";
+				min=prepareVal(++min);
+			}
+
+		}
+	}
+
+	function prepareVal(val)
+	{
+		if(val<10)
+			val="0"+val;
+		return val;
 	}
 }

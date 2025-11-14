@@ -75,9 +75,13 @@ Window
     CallDialog{id: dCall; objectName: "dCall"}
     QMLConnector{id: connector}
 
-    /*function open()
+    Timer
     {
-        dIncomingCall.open();
-    }*/
+        interval: 1*60*1000; running: true; repeat: true;
+        onTriggered:
+        {
+            connector.updateStatus();
+        }
+    }
 
 }

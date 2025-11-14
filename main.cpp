@@ -32,6 +32,19 @@ class QMLConnector: public QObject
             if(phone->port())
                 phone->call(std::move(num.toStdString()));
         }
+
+        Q_INVOKABLE void updateStatus()
+        {
+            auto *phone=Phone::getInstance();
+            if(phone->port())
+            {
+                phone->requestOperatorInfo();
+                sleep(1);
+                phone->requestConnectionStatus();
+                sleep(1);
+                phone->requestSignalStrength();
+            }
+        }
     private:
 
     /*signals:
