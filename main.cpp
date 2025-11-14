@@ -74,38 +74,37 @@ int main(int argc, char *argv[])
         &engine,
         &QQmlApplicationEngine::objectCreated,
         &app,
-        [url](QObject *obj, const QUrl &objUrl) {
+        [url, &engine](QObject *obj, const QUrl &objUrl) {
             if (!obj && url == objUrl)
                 QCoreApplication::exit(-1);
+            SerialPort port{"/dev/ttyUSB2", 9600};
+            if(port.open())
+            {
+                //Phone phone(&port, &engine);
+                //Phone phone(&port);
+                //because c++ object can not linked with qml(or I do not how),
+                //I made a Phone class a singleton
+                //There is initialization
+                Phone *phone=Phone::getInstance();
+                phone->port(&port);
+                phone->engine(&engine);
+                std::thread tListen(listen, phone);
+                tListen.detach();
+                phone->setVoiceHangupControl();
+                sleep(1);
+                phone->requestNumber();
+                sleep(1);
+                phone->requestSignalStrength();
+                sleep(1);
+                phone->requestConnectionStatus();
+                sleep(1);
+                phone->requestOperatorInfo();
+            }
+            else
+                std::cout<<"Error on open port!"<<std::endl;
         },
         Qt::QueuedConnection);
     engine.load(url);
-
-    SerialPort port{"/dev/ttyUSB2", 9600};
-    if(port.open())
-    {
-        //Phone phone(&port, &engine);
-        //Phone phone(&port);
-        //because c++ object can not linked with qml(or I do not how),
-        //I made a Phone class a singleton
-        //There is initialization
-        Phone *phone=Phone::getInstance();
-        phone->port(&port);
-        phone->engine(&engine);
-        std::thread tListen(listen, phone);
-        tListen.detach();
-        phone->setVoiceHangupControl();
-        sleep(1);
-        phone->requestNumber();
-        sleep(1);
-        phone->requestSignalStrength();
-        sleep(1);
-        phone->requestConnectionStatus();
-        sleep(1);
-        phone->requestOperatorInfo();
-    }
-    else
-        std::cout<<"Error on open port!"<<std::endl;
 
     /*auto *window=engine.rootObjects().first();
     auto *wIncomingCall=window->findChild<QObject*>("oIncomingCall");

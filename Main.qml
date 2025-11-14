@@ -32,7 +32,7 @@ Window
             spacing: 10
 
             StatusText{text: "Provider:"}
-            StatusText{id: tProvider; text:"PROVIDER_NAME"}
+            StatusText{id: tProvider; objectName:"tProvider"; text:"PROVIDER_NAME"}
         }
 
         Row
@@ -40,7 +40,7 @@ Window
             spacing: 10
 
             StatusText{text:"Connection status:"}
-            StatusText{id: tConnectionStatus; text:"CONNECTION_STATUS"}
+            StatusText{id: tConnectionStatus; objectName:"tConnectionStatus"; text:"CONNECTION_STATUS"}
         }
 
         Row
@@ -48,7 +48,7 @@ Window
             spacing: 10
 
             StatusText{text:"Signal strength:"}
-            StatusText{id: tSignalStrength; text:"SIGNAL_STRENGTH"}
+            StatusText{id: tSignalStrength; objectName:"tSignalStrength"; text:"SIGNAL_STRENGTH"}
         }
 
         CallButton{text: "📞"; onClicked: dDial.open()}

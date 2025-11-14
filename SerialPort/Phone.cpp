@@ -117,7 +117,7 @@ void Phone::parseResponse(std::string &str)
 			uint8_t i=0;
 			while(getline(ss, line, ','))
 				arr[i++]=line;
-			operatorName_=arr[3];
+            operatorName_=arr[2];
 			std::cout<<"parsed successfully. Result:"<<operatorName_<<std::endl;
             auto *tProvider=findQMLObj("tProvider");
             if(tProvider)
@@ -132,12 +132,12 @@ void Phone::parseResponse(std::string &str)
 //TODO: handle cases when size differs from 3
 			if(responseStr.size()==3)
 			{
-				status_=static_cast<ConnectionStatus>(responseStr[0]);
+                status_=static_cast<ConnectionStatus>(responseStr[2]);
                 auto *tStatus=findQMLObj("tConnectionStatus");
                 if(tStatus)
                     tStatus->setProperty("text", connectionStatus.at(status_));
-				connectionType_=static_cast<ConnectionType>(responseStr[2]);
-				std::cout<<"parsed successfully. Result:"<<static_cast<uint8_t>(status_)<<", "<<static_cast<uint8_t>(connectionType_)<<std::endl;
+                //connectionType_=static_cast<ConnectionType>(responseStr[2]);
+                //std::cout<<"parsed successfully. Result:"<<static_cast<uint8_t>(status_)<<", "<<static_cast<uint8_t>(connectionType_)<<std::endl;
 			}
 			break;
 		}
