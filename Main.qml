@@ -6,8 +6,8 @@ import qmlConnector
 
 Window
 {
-    width: 350
-    height: 350
+    width: 400
+    height: 450
     visible: true
     color: root.backgroundColor
 

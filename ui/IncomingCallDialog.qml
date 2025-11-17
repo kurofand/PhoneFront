@@ -12,6 +12,10 @@ Dialog
 	modal: true
 	padding: 20
 	closePolicy: Popup.CloseOnEscape
+	background: Rectangle
+	{
+		color: "#222222"
+	}
 
 
 	function answer()
@@ -38,6 +42,7 @@ Dialog
 		{
 			Layout.alignment: Qt.AlignHCenter
 			font.pointSize: 20
+			color: "#FFF"
 			text: "Incoming call"
 		}
 		Text

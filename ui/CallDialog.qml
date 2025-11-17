@@ -9,6 +9,10 @@ Dialog
 	modal: true
 	padding: 20
 	closePolicy: Popup.CloseOnEscape
+	background: Rectangle
+	{
+		color: "#222222"
+	}
 
 	property string number: "080xxxxxx56"
 	property string sec: "00"
@@ -70,6 +74,7 @@ Dialog
 			{
 				connector.reject();
 				runTimer=false;
+				connected=false;
 				tiCallTime.stop();
 				sec="00";
 				min="00";

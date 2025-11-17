@@ -12,12 +12,14 @@ Dialog
 	padding: 20
 	//closePolicy: Popup.CloseOnEscape
 	onClosed: tNumber.text=" "
+	background: Rectangle
+	{
+		color: "#222222"
+	}
 
 	function addNumber(text)
 	{
-		if(tNumber.text==" ")
-			tNumber.text=text;
-		else
+		if(tNumber.text.length<20)
 			tNumber.text+=text;
 	}
 
@@ -31,21 +33,33 @@ Dialog
 
 	ColumnLayout
 	{
+		anchors.fill: parent
 		spacing: 10
 
-		Row
+		RowLayout
 		{
+			width: parent.width
 			Text
 			{
 				id: tNumber
-				anchors.horizontalCenter: parent
+				Layout.fillWidth: true
 				color: "#FFF"
-				text: qsTr(" ")
+				text: qsTr("")
 			}
 			Button
 			{
-				width: 20
-				height: 20
+				Layout.preferredWidth: 30
+				Layout.preferredHeight: 30
+				onClicked:
+				{
+					tNumber.text=tNumber.text.slice(0, -1);
+				}
+				contentItem: Text
+				{
+					horizontalAlignment: Text.AlignHCenter
+					verticalAlignment: Text.AlignVCenter
+					text:"⌫"
+				}
 			}
 		}
 		Grid
