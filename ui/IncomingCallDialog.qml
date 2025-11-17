@@ -19,6 +19,7 @@ Dialog
 		connector.answer();
 		dCall.open();
 		dCall.number=tIncomingNumber.text;
+		dCall.runTimer=true;
 		close();
 	}
 

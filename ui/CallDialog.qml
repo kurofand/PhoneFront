@@ -13,6 +13,8 @@ Dialog
 	property string number: "080xxxxxx56"
 	property string sec: "00"
 	property string min: "00"
+	property bool runTimer: false
+	property bool connected: false
 
 	ColumnLayout
 	{
@@ -26,7 +28,7 @@ Dialog
 				id: tCallStatus
 				Layout.alignment: Qt.AlignHCenter
 				font.pointSize: 15
-				text: "Calling..."
+				text: connected?"Connected":"Calling..."
 			}
 			Text
 			{
@@ -67,6 +69,7 @@ Dialog
 			onClicked:
 			{
 				connector.reject();
+				runTimer=false;
 				tiCallTime.stop();
 				sec="00";
 				min="00";
@@ -78,7 +81,7 @@ Dialog
 	Timer
 	{
 		id: tiCallTime
-		running: false; repeat: true
+		running: runTimer; repeat: true
 		onTriggered:
 		{
 			sec=prepareVal(++sec);

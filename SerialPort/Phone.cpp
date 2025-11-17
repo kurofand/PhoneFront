@@ -26,6 +26,8 @@ void Phone::requestSignalStrength()
 void Phone::call(std::string &&num)
 {
 	std::string command("ATD"+num);
+    currentCall_=new Call();
+    currentCall_->number(num);
 	port_->writeToPort(command.c_str());
 }
 
@@ -113,7 +115,7 @@ void Phone::parseResponse(std::string &str)
 			std::cout<<"Response to COPS request...";
 			std::stringstream ss(responseStr);
 			std::string line;
-			std::string arr[4];
+            std::string arr[4];
 			uint8_t i=0;
 			while(getline(ss, line, ','))
 				arr[i++]=line;
@@ -152,38 +154,44 @@ void Phone::parseResponse(std::string &str)
                 currentCall_=new Call();
 			break;
 		}
+        //This command for list current calls, but it also executes automatically on active call(dialed and received)
+        //not best decision but for now ignore command if there is call with number info
+        //received pattern: create call on RING, get number from first CLCC, then ignore
+        //dialed pattern: create call on ATD, set number on ATD, ignore all CLCC
 		case ATResponse::CLCC:
 		{
-            std::string s;
-            std::stringstream ss(responseStr);
-            std::string arr[7];
-            uint8_t i=0;
-            while(getline(ss, s, ','))
-                arr[i++]=s;
-            try
+            if(currentCall_&&currentCall_->number()->empty())
             {
-                //TODO: add checking and handling for wrong sizes
-                size_t convertedSize=0;
-                currentCall_->status(std::stoi(arr[2], &convertedSize));
+                std::string s;
+                std::stringstream ss(responseStr);
+                std::string arr[7];
+                uint8_t i=0;
+                while(getline(ss, s, ','))
+                    arr[i++]=s;
+                try
+                {
+                    //TODO: add checking and handling for wrong sizes
+                    size_t convertedSize=0;
+                    currentCall_->status(std::stoi(arr[2], &convertedSize));
 
-                currentCall_->mode(std::stoi(arr[3], &convertedSize));
+                    currentCall_->mode(std::stoi(arr[3], &convertedSize));
 
-                currentCall_->numberType(std::stoi(arr[6], &convertedSize));
-            }
-            catch(std::exception &e)
-            {
+                    currentCall_->numberType(std::stoi(arr[6], &convertedSize));
+                }
+                catch(std::exception &e)
+                {
 
-            }
+                }
 
-            currentCall_->number(arr[5].substr(1, arr[5].size()-2));
+                currentCall_->number(arr[5].substr(1, arr[5].size()-2));
 
-            auto *dIncomingCall=findQMLObj("dIncomingCall");
-            if(dIncomingCall)
-            {
-                std::cout<<"dialog found"<<std::endl;
-                auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
-                tIncomingNumber->setProperty("text", currentCall_->number()->c_str());
-                QMetaObject::invokeMethod(dIncomingCall, "open");
+                auto *dIncomingCall=findQMLObj("dIncomingCall");
+                if(dIncomingCall)
+                {
+                    auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
+                    tIncomingNumber->setProperty("text", currentCall_->number()->c_str());
+                    QMetaObject::invokeMethod(dIncomingCall, "open");
+                }
             }
 
 			break;
@@ -202,6 +210,15 @@ void Phone::parseResponse(std::string &str)
                 auto *dCall=findQMLObj("dCall");
                 if(dCall)
                     QMetaObject::invokeMethod(dCall, "close");
+            }
+            else if(responseStr.find("BEGIN")!=std::string::npos)
+            {
+                auto *dCall=findQMLObj("dCall");
+                if(dCall)
+                {
+                    dCall->setProperty("connected", true);
+                    dCall->setProperty("runTimer", true);
+                }
             }
             break;
         }
@@ -230,6 +247,37 @@ RING
 RING
 
 MISSED_CALL: 11:53AM 08020866256
+*/
+
+/*
+minicom incoming call:
+RING
+
++CLCC: 4,1,4,0,0,num,128
+
+VOICE CALL: BEGIN
+
+OK
+
++CLCC: 4,1,0,0,0,num,128
+
+ERROR
+
++CLCC: 4,1,6,0,0,num,128
+
+VOICE CALL: END: 000008
+*/
+/*
+minicom ATD command output:
++CLCC: 3,0,2,0,0,num,129
+
+VOICE CALL: BEGIN
+
++CLCC: 3,0,0,0,0,num,129
+
++CLCC: 3,0,6,0,0,num,129
+
+VOICE CALL: END: 000003
 */
 }
 
