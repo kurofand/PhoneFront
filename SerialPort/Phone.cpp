@@ -25,10 +25,11 @@ void Phone::requestSignalStrength()
 
 void Phone::call(std::string &&num)
 {
-	std::string command("ATD"+num);
+    std::string command("ATD"+num+";");
     currentCall_=new Call();
     currentCall_->number(num);
 	port_->writeToPort(command.c_str());
+    std::cout<<"ATD request sent"<<std::endl;
 }
 
 void Phone::answer()
@@ -203,23 +204,33 @@ void Phone::parseResponse(std::string &str)
         //TODO: add to end call cases feature to save call history
         case ATResponse::VOICE_CALL:
         {
+            std::cout<<"voice call ";
             if(responseStr.find("END:")!=std::string::npos)
             {
+                std::cout<<"END";
                 delete currentCall_;
                 currentCall_=nullptr;
                 auto *dCall=findQMLObj("dCall");
                 if(dCall)
                     QMetaObject::invokeMethod(dCall, "close");
+                if(currentCall_)
+                {
+                    delete currentCall_;
+                    currentCall_=nullptr;
+                }
             }
             else if(responseStr.find("BEGIN")!=std::string::npos)
             {
+                std::cout<<"BEGIN";
                 auto *dCall=findQMLObj("dCall");
                 if(dCall)
                 {
+                    std::cout<<"call dialog found"<<std::endl;
                     dCall->setProperty("connected", true);
                     dCall->setProperty("runTimer", true);
                 }
             }
+            std::cout<<std::endl;
             break;
         }
         case ATResponse::MISSED_CALL:

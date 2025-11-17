@@ -20,7 +20,7 @@ class Call
         void mode(int i){mode_=static_cast<CallMode>(i);}
 		void numberType(uint8_t i){numberType_=i;}
         //for test purposes
-        ~Call(){std::cout<<"call was deleted"<<std::endl;};
+        ~Call(){};
 	private:
 		std::string number_;
 		CallStatus status_=CallStatus::UNKNOWN;
