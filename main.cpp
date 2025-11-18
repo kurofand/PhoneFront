@@ -38,8 +38,9 @@ class QMLConnector: public QObject
             auto *phone=Phone::getInstance();
             if(phone->port())
             {
-                phone->requestOperatorInfo();
-                sleep(1);
+                //Not sure that it is necessary to update operator info
+                /*phone->requestOperatorInfo();
+                sleep(1);*/
                 phone->requestConnectionStatus();
                 sleep(1);
                 phone->requestSignalStrength();

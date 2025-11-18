@@ -15,11 +15,17 @@ void Phone::requestOperatorInfo()
 
 void Phone::requestConnectionStatus()
 {
+    auto *root=findQMLObj("root");
+    if(root)
+        root->setProperty("updatingConnectionStatus", true);
 	port_->writeToPort("AT+CREG?\r\n");
 }
 
 void Phone::requestSignalStrength()
 {
+    auto *root=findQMLObj("root");
+    if(root)
+        root->setProperty("updatingSignalStrength", true);
 	port_->writeToPort("AT+CSQ\r\n");
 }
 
@@ -99,6 +105,9 @@ void Phone::parseResponse(std::string &str)
             auto *tSignalStrength=findQMLObj("tSignalStrength");
             if(tSignalStrength)
                 tSignalStrength->setProperty("text", signalStrength_);
+            auto *root=findQMLObj("root");
+            if(root)
+                root->setProperty("updatingSignalStrength", false);
 			break;
 		}
 		case ATResponse::CNUM:
@@ -122,9 +131,9 @@ void Phone::parseResponse(std::string &str)
 				arr[i++]=line;
             operatorName_=arr[2];
 			std::cout<<"parsed successfully. Result:"<<operatorName_<<std::endl;
-            auto *tProvider=findQMLObj("tProvider");
-            if(tProvider)
-                tProvider->setProperty("text", operatorName_.c_str());
+            auto *tOperator=findQMLObj("tOperator");
+            if(tOperator)
+                tOperator->setProperty("text", operatorName_.c_str());
 			break;
 		}
 		case ATResponse::CREG:
@@ -146,6 +155,9 @@ void Phone::parseResponse(std::string &str)
                 //connectionType_=static_cast<ConnectionType>(responseStr[2]);
                 //std::cout<<"parsed successfully. Result:"<<static_cast<uint8_t>(status_)<<", "<<static_cast<uint8_t>(connectionType_)<<std::endl;
 			}
+            auto *root=findQMLObj("root");
+            if(root)
+                root->setProperty("updatingConnectionStatus", false);
 			break;
 		}
 		case ATResponse::RING:

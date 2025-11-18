@@ -14,6 +14,7 @@ Window
     Item
     {
         id:root
+        objectName: "root"
         anchors.fill: parent
         anchors.topMargin: parent.SafeArea.margins.top
         anchors.leftMargin: parent.SafeArea.margins.left
@@ -21,34 +22,51 @@ Window
         anchors.bottomMargin: parent.SafeArea.margins.bottom
 
         readonly property color backgroundColor: "#222222"
+        property bool updatingConnectionStatus: false
+        property bool updatingSignalStrength: false
     }
 
     ColumnLayout
     {
+
         spacing: 10
 
-        Row
+        MarginRow
         {
-            spacing: 10
+            Layout.topMargin: 5
 
-            StatusText{text: "Provider:"}
-            StatusText{id: tProvider; objectName:"tProvider"; text:"PROVIDER_NAME"}
+            StatusText{text: "Operator:"}
+            StatusText{id: tOperator; objectName:"tOperator"; text:"Failed to get an operator name"}
         }
 
-        Row
+        MarginRow
         {
-            spacing: 10
-
             StatusText{text:"Connection status:"}
             StatusText{id: tConnectionStatus; objectName:"tConnectionStatus"; text:"CONNECTION_STATUS"}
         }
 
-        Row
+        MarginRow
         {
-            spacing: 10
-
             StatusText{text:"Signal strength:"}
             StatusText{id: tSignalStrength; objectName:"tSignalStrength"; text:"SIGNAL_STRENGTH"}
+        }
+
+        MarginRow
+        {
+            Button
+            {
+                width: 50
+                height: 50
+                enabled: !root.updatingConnectionStatus&&!root.updatingSignalStrength
+                onClicked: connector.updateStatus()
+                contentItem: Text
+                {
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pointSize: 15
+                    text: "⟳"
+                }
+            }
         }
 
         CallButton{text: "📞"; onClicked: dDial.open()}
@@ -77,7 +95,7 @@ Window
 
     Timer
     {
-        interval: 1*60*1000; running: true; repeat: true;
+        interval: 1*60*1000; running: false; repeat: true;
         onTriggered:
         {
             connector.updateStatus();
