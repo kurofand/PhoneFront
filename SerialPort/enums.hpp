@@ -37,6 +37,8 @@ enum class ATResponse
 	CLCC,
     VOICE_CALL,
     MISSED_CALL,
+    CMTI,
+    CMGRD,
 	UNKNOWN
 };
 

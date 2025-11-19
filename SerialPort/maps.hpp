@@ -12,6 +12,8 @@ std::unordered_map<std::string, ATResponse> responseMap=
 	{"RING",ATResponse::RING},
     {"+CLIP",ATResponse::CLIP},
     {"+CLCC",ATResponse::CLCC},
+    {"+CMTI",ATResponse::CMTI},
+    {"+CMGRD",ATResponse::CMGRD},
     {"VOICE CALL",ATResponse::VOICE_CALL}
 };
 

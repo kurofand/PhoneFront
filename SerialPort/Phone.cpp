@@ -1,5 +1,6 @@
 #include "Phone.hpp"
 #include "maps.hpp"
+#include "sms.cpp"
 
 #include <sstream>
 
@@ -56,6 +57,14 @@ void Phone::hangUp()
 void Phone::setVoiceHangupControl()
 {
     port_->writeToPort("AT+CVHU=0\r\n");
+}
+
+void Phone::readAndDeleteMessage(const char* mesId)
+{
+    std::string command("AT+CMGRD=");
+    command+=mesId;
+    command+="\r\n";
+    port_->writeToPort(command.c_str());
 }
 
 //TODO: maybe add AT+CPAS command to get current call status
@@ -245,6 +254,29 @@ void Phone::parseResponse(std::string &str)
             std::cout<<std::endl;
             break;
         }
+        case ATResponse::CMTI:
+        {
+            std::cout<<"CMTI request came"<<std::endl;
+            //TODO:
+            //There is a CMGRD command(read and delete) so parsing for a actual id
+            //is not necessary, but probably it is better to support non first message
+            readAndDeleteMessage("0");
+            break;
+        }
+        case ATResponse::CMGRD:
+        {
+            std::cout<<"CMGRD response came"<<std::endl;
+            uint8_t i=0;
+            std::stringstream ss(responseStr);
+            std::string pduLine;
+            //get second line(response body) from response
+            while(getline(ss, pduLine, '\n'))
+                if(i++==1)
+                    break;
+            Sms sms{&pduLine};
+            sms.parse();
+            break;
+        }
         case ATResponse::MISSED_CALL:
         {
             std::string time, num;
@@ -301,6 +333,16 @@ VOICE CALL: BEGIN
 +CLCC: 3,0,6,0,0,num,129
 
 VOICE CALL: END: 000003
+*/
+
+/*
+incoming SMS
++CMTI: "SM",9
+
++CPMS: 10,10,10,10,10,10
+
+OK
+
 */
 }
 

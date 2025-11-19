@@ -18,6 +18,7 @@ class Phone
 		void requestConnectionStatus();
 		void requestSignalStrength();
         void setVoiceHangupControl();
+        void readAndDeleteMessage(const char* mesId);
 		void parseResponse(std::string &str);
 		void answer();
 		void disconnect();
