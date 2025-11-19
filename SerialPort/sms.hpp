@@ -13,6 +13,8 @@ class Sms
         std::string message_;
         std::string number_;
         std::string datetime_;
+
+        void strHexToDec(size_t *p, size_t pos);
 };
 
 #endif // SMS_HPP
