@@ -8,6 +8,10 @@ class Sms
     public:
         Sms(std::string *pdu): pdu_(pdu){};
         void parse();
+        const std::string* message(){return &message_;}
+        const std::string* number(){return &number_;}
+        const std::string* datetime(){return &datetime_;}
+
     private:
         std::string *pdu_;
         std::string message_;

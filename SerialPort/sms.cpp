@@ -1,6 +1,8 @@
 #include "sms.hpp"
 #include <iostream>
 #include <sstream>
+#include <locale>
+#include <codecvt>
 
 void Sms::parse()
 {
@@ -19,17 +21,62 @@ void Sms::parse()
     //and after decoding cut F
     if(numLength%2!=0)
         numLength++;
-    std::string num=pdu_->substr(currentPos+=2, numLength+2);
+
     //91 means the number is in international format which means "+" on the head
     //another value means that number is actually a text, but it is probably not a SMS case
-    if(num.substr(0, 2)=="91")
+    if(pdu_->substr(currentPos+=2, 2)=="91")
         number_+='+';
-    for(unsigned i=2;i<=numLength;i+=2)
     {
-        number_.push_back(num.at(i+1));
-        number_.push_back(num.at(i));
+        auto numStart=currentPos;
+        for(currentPos+=2;currentPos<=numStart+numLength;currentPos+=2)
+        {
+            number_.push_back(pdu_->at(currentPos+1));
+            number_.push_back(pdu_->at(currentPos));
+        }
+        if(number_.ends_with('F'))
+            number_.pop_back();
     }
 
+    //skip TP-PID - protocol identifier
+    currentPos+=2;
+    //skip TP-DCS - data coding scheme, believing it is UCS2
+    currentPos+=2;
+
+    //get datetime, same as sender number octets are reversed, format is yy mm dd HH MM SS
+    {
+        auto dateStart=currentPos;
+        std::string tmp;
+        for(;currentPos<=dateStart+12;currentPos+=2)
+        {
+            tmp.push_back(pdu_->at(currentPos+1));
+            tmp.push_back(pdu_->at(currentPos));
+        }
+        std::string year, mon, day, hour, min, sec;
+        year="20"+tmp.substr(0, 2);
+        mon=tmp.substr(2, 2);
+        day=tmp.substr(4, 2);
+        hour=tmp.substr(6, 2);
+        min=tmp.substr(8, 2);
+        day=tmp.substr(10, 2);
+        datetime_=day+"/"+mon+"/"+year+" "+hour+":"+min+":"+sec;
+
+    }
+
+    //skip timezone info
+    currentPos+=2;
+    //skip TP-UDL - length of data. for basic sms data will be from current point to the end of the message
+    currentPos+=2;
+
+    //data in 4 digit hexes
+    for(;currentPos<pdu_->size();currentPos+=4)
+    {
+        std::stringstream ss;
+        ss<<std::hex<<pdu_->substr(currentPos, 4);
+        int val;
+        ss>>val;
+        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+        message_+=converter.to_bytes(val);
+    }
 
 }
 

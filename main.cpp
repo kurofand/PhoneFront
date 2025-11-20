@@ -56,7 +56,7 @@ class QMLConnector: public QObject
 
 void listen(Phone *phone)
 {
-    const size_t bufSize=255;
+    const size_t bufSize=1024;
     for(;;)
     {
         char buf[bufSize];
