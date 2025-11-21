@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(SQLite3 REQUIRED)
 
 
 qt_add_executable(appPhoneFront
@@ -47,6 +48,7 @@ target_link_libraries(appPhoneFront
     PRIVATE Qt6::Quick
 )
 target_link_libraries(appPhoneFront PRIVATE Qt6::Core)
+target_link_libraries(appPhoneFront PRIVATE SQLite::SQLite3)
 
 include(GNUInstallDirs)
 install(TARGETS appPhoneFront
