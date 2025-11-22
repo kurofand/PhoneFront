@@ -1,0 +1,9 @@
+Global]
+Name=appPhoneFront
+Comment=Notifications for SIM7600E
+DesktopEntry=appPhoneFront
+
+[Event/test]
+Name=Test
+Action=Popup
+Urgency=Low
