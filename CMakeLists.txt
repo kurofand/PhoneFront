@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(KF6 REQUIRED COMPONENTS Notifications)
 find_package(SQLite3 REQUIRED)
 
 
@@ -49,6 +50,7 @@ target_link_libraries(appPhoneFront
 )
 target_link_libraries(appPhoneFront PRIVATE Qt6::Core)
 target_link_libraries(appPhoneFront PRIVATE SQLite::SQLite3)
+target_link_libraries(appPhoneFront PRIVATE KF6::Notifications)
 
 include(GNUInstallDirs)
 install(TARGETS appPhoneFront
