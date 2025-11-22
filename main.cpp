@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include <KNotification>
+#include <stdio.h>
 
 //#include "qmlconnector.hpp"
 #include "SerialPort/Phone.cpp"
@@ -128,10 +129,7 @@ int main(int argc, char *argv[])
     if(wIncomingCall)
         wIncomingCall->setProperty("visible", true);*/
 
-    auto *notification=new KNotification("test");
-    notification->setTitle("title");
-    notification->setText("n text");
-    notification->sendEvent();
+    system("notify-send Test \"Hello test\"");
 
     return app.exec();
 }
