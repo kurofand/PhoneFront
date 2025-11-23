@@ -3,6 +3,7 @@
 #include "sms.cpp"
 
 #include <sstream>
+#include <stdio.h>
 
 void Phone::requestNumber()
 {
@@ -214,6 +215,10 @@ void Phone::parseResponse(std::string &str)
                     tIncomingNumber->setProperty("text", currentCall_->number()->c_str());
                     QMetaObject::invokeMethod(dIncomingCall, "open");
                 }
+
+                std::string nBody="\"Incoming call from "+*currentCall_->number()+"\"";
+                sendNotification(&nBody);
+
             }
 
 			break;
@@ -275,6 +280,8 @@ void Phone::parseResponse(std::string &str)
                     break;
             Sms sms{&pduLine};
             sms.parse();
+            std::string nBody="\"New message from "+*sms.number()+"\"";
+            sendNotification(&nBody);
             break;
         }
         case ATResponse::MISSED_CALL:
@@ -354,6 +361,13 @@ QObject* Phone::findQMLObj(const char* objName)
     if(!window)
         return nullptr;
     return window->findChild<QObject*>(objName);
+}
+
+void Phone::sendNotification(std::string *body)
+{
+    std::string notification="notify-send PhoneFront ";
+    notification+=*body;
+    system(notification.c_str());
 }
 
 Phone* Phone::getInstance()

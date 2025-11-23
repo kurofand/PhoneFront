@@ -4,8 +4,7 @@
 #include <thread>
 #include <iostream>
 
-#include <KNotification>
-#include <stdio.h>
+//#include <stdio.h>
 
 //#include "qmlconnector.hpp"
 #include "SerialPort/Phone.cpp"
@@ -123,13 +122,6 @@ int main(int argc, char *argv[])
     }
     else
         std::cout<<"Error on open port!"<<std::endl;
-
-    /*auto *window=engine.rootObjects().first();
-    auto *wIncomingCall=window->findChild<QObject*>("oIncomingCall");
-    if(wIncomingCall)
-        wIncomingCall->setProperty("visible", true);*/
-
-    system("notify-send Test \"Hello test\"");
 
     return app.exec();
 }
