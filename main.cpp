@@ -8,6 +8,7 @@
 
 //#include "qmlconnector.hpp"
 #include "SerialPort/Phone.cpp"
+#include "sqliteconnector/sqliteclient.cpp"
 
 
 class QMLConnector: public QObject
@@ -122,6 +123,9 @@ int main(int argc, char *argv[])
     }
     else
         std::cout<<"Error on open port!"<<std::endl;
+
+    auto *dbClient=SqliteClient::instance();
+    dbClient->connect();
 
     return app.exec();
 }

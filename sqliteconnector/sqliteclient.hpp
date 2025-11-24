@@ -9,16 +9,26 @@
 class SqliteClient
 {
 	public:
-    SqliteClient(const char *fileName): fileName_(fileName){};
-		void connect();
+        SqliteClient(){};
+        static SqliteClient* instance();
+        void connect(const char *fileName);
+        void connect(bool createDB=false);
 
         void executeQuery(const char *query, std::vector<std::unordered_map<std::string, std::string>> *queryResult=nullptr);
 		void closeConnection();
 		~SqliteClient();
 	private:
+        void prepareDB();
+        inline static SqliteClient *instance_=nullptr;
 		sqlite3 *db;
         const char* fileName_;
 		bool connected=false;
+
+        const char* smsTableSQL="CREATE TABLE sms(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                  "isReceived BOOLEAN NOT NULL CHECK(isReceived IN (0,1)),"
+                                  "datetime CHARACTER(19) NOT NULL,"
+                                  "number VARCHAR(20) NOT NULL,"
+                                  "msg TEXT);";
 };
 
 #endif

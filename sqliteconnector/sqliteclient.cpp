@@ -1,10 +1,31 @@
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include "sqliteclient.hpp"
 
-void SqliteClient::connect()
+void SqliteClient::connect(const char* fileName)
 {
+    fileName_=fileName;
+    connect();
+}
+
+SqliteClient* SqliteClient::instance()
+{
+    if(!instance_)
+        instance_=new SqliteClient();
+    return instance_;
+}
+
+void SqliteClient::connect(bool createDB)
+{
+    const std::filesystem::path dbPath="db";
+    if(!std::filesystem::exists(dbPath))
+    {
+        prepareDB();
+        return;
+    }
 	uint8_t rc;
-    rc=sqlite3_open(fileName_, &db);
+    rc=sqlite3_open("db/phone.db", &db);
 	if(rc)
 	{
 		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -13,6 +34,10 @@ void SqliteClient::connect()
 	else
 		fprintf(stderr, "Opened db successfully\n");
 	this->connected=true;
+    if(createDB)
+    {
+        executeQuery(smsTableSQL);
+    }
 }
 
 
@@ -56,8 +81,15 @@ void SqliteClient::closeConnection()
     connected=false;
 }
 
+void SqliteClient::prepareDB()
+{
+    std::filesystem::create_directory("db");
+    std::ofstream{"db/phone.db"};
+    connect(true);
+}
+
 SqliteClient::~SqliteClient()
 {
-	this->closeConnection();
+    this->closeConnection();
 }
 

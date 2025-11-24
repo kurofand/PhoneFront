@@ -4,7 +4,6 @@
 #include "enums.hpp"
 #include "call.hpp"
 #include "SerialPort.cpp"
-#include "../sqliteconnector/sqliteclient.cpp"
 #include <qqmlapplicationengine.h>
 
 class Phone
@@ -43,7 +42,6 @@ class Phone
 		uint8_t signalStrength_=0;
 
         QQmlApplicationEngine *engine_;
-        SqliteClient client{"db/db.db"};
 
 };
 
