@@ -300,6 +300,9 @@ void Phone::parseResponse(std::string &str)
             num=responseStr;
             if(currentCall_!=nullptr&&currentCall_->number()->data()==num)
             {
+                auto dIncomingCall=findQMLObj("dIncomingCall");
+                if(dIncomingCall)
+                    QMetaObject::invokeMethod(dIncomingCall, "close");
                 currentCall_->missed(true);
                 delete currentCall_;
                 currentCall_=nullptr;
