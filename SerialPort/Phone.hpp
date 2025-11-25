@@ -2,7 +2,7 @@
 #define PHONE_HPP
 
 #include "enums.hpp"
-#include "call.hpp"
+#include "call.cpp"
 #include "SerialPort.cpp"
 #include <qqmlapplicationengine.h>
 
