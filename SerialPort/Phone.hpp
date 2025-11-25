@@ -31,6 +31,7 @@ class Phone
 	private:
         QObject* findQMLObj(const char* objName);
         void sendNotification(std::string *body);
+        void removeNewLine(std::string *s);
         inline static Phone *instance=nullptr;
         SerialPort *port_=nullptr;
 		std::string number_;

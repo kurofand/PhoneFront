@@ -87,8 +87,7 @@ void Phone::parseResponse(std::string &str)
 	else
     {
         commandKey=str;
-        std::erase(commandKey, '\r');
-        std::erase(commandKey, '\n');
+        removeNewLine(&commandKey);
     }
 	std::cout<<"|"<<commandKey<<"|"<<std::endl;
 	std::cout<<responseStr<<"|"<<std::endl;
@@ -150,8 +149,7 @@ void Phone::parseResponse(std::string &str)
 		{
 			std::cout<<"Response to CREG request...";
             //erase OK\r\n
-            std::erase(responseStr, '\r');
-            std::erase(responseStr, '\n');
+            removeNewLine(&responseStr);
             responseStr.erase(responseStr.end()-2, responseStr.end());
 //usual response something like " 0,0", space at the beginning cutted above
 //so if size differs from 3 something went wrong
@@ -296,7 +294,8 @@ void Phone::parseResponse(std::string &str)
             std::string time, num;
             auto spacePos=responseStr.find(' ');
             time=responseStr.substr(0, spacePos);
-            responseStr.erase(0, spacePos);
+            responseStr.erase(0, spacePos+1);
+            removeNewLine(&responseStr);
             num=responseStr;
             if(currentCall_!=nullptr&&currentCall_->number()->data()==num)
             {
@@ -386,4 +385,10 @@ Phone* Phone::getInstance()
     if(instance==nullptr)
         instance=new Phone();
     return instance;
+}
+
+void Phone::removeNewLine(std::string *s)
+{
+    std::erase(*s, '\r');
+    std::erase(*s, '\n');
 }
