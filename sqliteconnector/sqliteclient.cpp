@@ -18,6 +18,8 @@ SqliteClient* SqliteClient::instance()
 
 void SqliteClient::connect(bool createDB)
 {
+    if(connected)
+        return;
     const std::filesystem::path dbPath="db";
     if(!std::filesystem::exists(dbPath))
     {

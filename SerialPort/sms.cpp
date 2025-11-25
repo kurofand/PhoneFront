@@ -4,6 +4,8 @@
 #include <locale>
 #include <codecvt>
 
+#include "../sqliteconnector/sqliteclient.hpp"
+
 void Sms::parse()
 {
     std::cout<<"parsing"<<std::endl;
@@ -77,6 +79,19 @@ void Sms::parse()
         std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
         message_+=converter.to_bytes(val);
     }
+    received_=true;
+
+}
+
+void Sms::saveToDB()
+{
+    auto *dbInstance=SqliteClient::instance();
+    dbInstance->connect();
+    std::string query="INSERT INTO sms(isReceived, datetime, number, msg, isReaded)"
+                        "VALUES(";
+    query+=received_;
+    query+=",\""+datetime_+"\",\""+number_+"\",\""+message_+"\",0)";
+    dbInstance->executeQuery(query.c_str());
 
 }
 

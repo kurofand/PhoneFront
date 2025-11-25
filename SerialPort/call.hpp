@@ -9,7 +9,8 @@ class Call
 {
 	public:
         Call(){};
-        Call(CallType type): type_(type) {}
+        Call(CallType type);
+        void saveToDB();
         std::string* number(){return &number_;}
 		CallStatus status(){return status_;}
 		CallMode mode(){return mode_;}
@@ -19,10 +20,14 @@ class Call
         void status(int i){status_=static_cast<CallStatus>(i);}
         void mode(int i){mode_=static_cast<CallMode>(i);}
 		void numberType(uint8_t i){numberType_=i;}
-        //for test purposes
+        void missed(bool b){missed_=b;}
+
         ~Call(){};
 	private:
+        bool missed_=false;
+        std::string datetime_;
 		std::string number_;
+        std::string callLength_;
 		CallStatus status_=CallStatus::UNKNOWN;
 		CallMode mode_=CallMode::UNKNOWN;
 		uint8_t numberType_;

@@ -174,7 +174,7 @@ void Phone::parseResponse(std::string &str)
 		{
 			std::cout<<"RING request came"<<std::endl;
             if(currentCall_==nullptr)
-                currentCall_=new Call();
+                currentCall_=new Call(CallType::INCOMING);
 			break;
 		}
         //This command for list current calls, but it also executes automatically on active call(dialed and received)
@@ -282,6 +282,7 @@ void Phone::parseResponse(std::string &str)
             sms.parse();
             std::string nBody="\"New message from "+*sms.number()+"\"";
             sendNotification(&nBody);
+            sms.saveToDB();
             break;
         }
         case ATResponse::MISSED_CALL:

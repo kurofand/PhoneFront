@@ -28,7 +28,15 @@ class SqliteClient
                                   "isReceived BOOLEAN NOT NULL CHECK(isReceived IN (0,1)),"
                                   "datetime CHARACTER(19) NOT NULL,"
                                   "number VARCHAR(20) NOT NULL,"
-                                  "msg TEXT);";
+                                  "msg TEXT,"
+                                  "isReaded BOOLEAN NOT NULL CHECK(isReaded IN (0,1)));";
+
+        const char* callsTableSQL="CREATE TABLE calls(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                    "isReceived BOOLEAN NOT NULL CHECK(isReceived IN (0,1)),"
+                                    "datetime CHARACTER(19) NOT NULL,"
+                                    "number VARCHAR(20) NOT NULL,"
+                                    "length CHARACTER(5) NOT NULL,"
+                                    "isMissed BOOLEAN NOT NULL CHECK(isMissed IN (0,1)));";
 };
 
 #endif
