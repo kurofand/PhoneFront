@@ -39,6 +39,7 @@ void SqliteClient::connect(bool createDB)
     if(createDB)
     {
         executeQuery(smsTableSQL);
+        executeQuery(callsTableSQL);
     }
 }
 
