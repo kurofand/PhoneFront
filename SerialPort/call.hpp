@@ -21,13 +21,13 @@ class Call
         void mode(int i){mode_=static_cast<CallMode>(i);}
 		void numberType(uint8_t i){numberType_=i;}
         void missed(bool b){missed_=b;}
-
-        ~Call(){};
+        void callLength(std::string &&s){callLength_=s;}
+        ~Call();
 	private:
         bool missed_=false;
         std::string datetime_;
 		std::string number_;
-        std::string callLength_;
+        std::string callLength_="00:00";
 		CallStatus status_=CallStatus::UNKNOWN;
 		CallMode mode_=CallMode::UNKNOWN;
 		uint8_t numberType_;

@@ -20,7 +20,15 @@ void Call::saveToDB()
     auto *dbInstance=SqliteClient::instance();
     dbInstance->connect();
     std::string query="INSERT INTO calls(isReceived, datetime, number, length, isMissed) VALUES("+
-                        static_cast<unsinged>(type_)+",\""+datetime_+"\","
-                        "\""+number_+"\",\""+callLength_+"\","+missed_+";";
+                        std::to_string(static_cast<unsigned>(type_))+",\""+datetime_+"\","
+                        "\""+number_+"\",\""+callLength_+"\",";
+    query+=missed_;
+    query+=";";
+    dbInstance->executeQuery(query.c_str());
 
+}
+
+Call::~Call()
+{
+    saveToDB();
 }

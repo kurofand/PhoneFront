@@ -238,7 +238,13 @@ void Phone::parseResponse(std::string &str)
                 currentCall_=nullptr;
                 auto *dCall=findQMLObj("dCall");
                 if(dCall)
+                {
+                    auto min=dCall->property("min").toString().toStdString();
+                    auto sec=dCall->property("sec").toString().toStdString();
+                    std::string length=min+":"+sec;
+                    currentCall_->callLength(std::move(length));
                     QMetaObject::invokeMethod(dCall, "close");
+                }
                 if(currentCall_)
                 {
                     delete currentCall_;
@@ -294,6 +300,7 @@ void Phone::parseResponse(std::string &str)
             num=responseStr;
             if(currentCall_!=nullptr&&currentCall_->number()->data()==num)
             {
+                currentCall_->missed(true);
                 delete currentCall_;
                 currentCall_=nullptr;
             }
