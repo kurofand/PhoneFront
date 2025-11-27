@@ -1,12 +1,14 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt.labs.qmlmodels
 
 import qmlConnector
 import "./ui/components"
 import "./ui/dialogs"
+import "./ui/fragments"
 
-Window
+ApplicationWindow
 {
     width: 400
     height: 450
@@ -30,6 +32,13 @@ Window
 
     ColumnLayout
     {
+        Loader
+        {
+            id: lContainer
+            height: 200
+            anchors.left: parent.left
+            anchors.right: parent.right
+        }
 
         spacing: 10
 
@@ -85,7 +94,7 @@ Window
     {
         width: 50
         height: 50
-        onClicked: dDial.open();
+        onClicked: {lContainer.sourceComponent=cCalls; connector.getCalls()}
     }
     }
     }
@@ -95,6 +104,14 @@ Window
     CallDialog{id: dCall; objectName: "dCall"}
     QMLConnector{id: connector}
 
+    Component
+    {
+        id: cCalls
+        CallsFragment{id:fCalls; model: callModel}
+    }
+
+    ListModel{id: mainModel}
+
     Timer
     {
         interval: 1*60*1000; running: false; repeat: true;
@@ -102,6 +119,11 @@ Window
         {
             connector.updateStatus();
         }
+    }
+
+    function appendCalls(row)
+    {
+        callModel.append(row);
     }
 
 }

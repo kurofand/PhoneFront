@@ -1,5 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQuickItem>
+#include <QQuickWindow>
 
 #include <thread>
 #include <iostream>
@@ -11,11 +13,11 @@
 #include "sqliteconnector/sqliteclient.cpp"
 
 
-class QMLConnector: public QObject
+class QMLConnector: public QQuickItem
 {
     Q_OBJECT
     public:
-        QMLConnector(QObject *parent=nullptr){}
+        QMLConnector(QQuickItem *parent=nullptr): QQuickItem(parent){}
         Q_INVOKABLE void answer()
         {
             auto *phone=Phone::getInstance();
@@ -49,6 +51,25 @@ class QMLConnector: public QObject
                 phone->requestSignalStrength();
             }
         }
+
+        Q_INVOKABLE void getCalls()
+        {
+            auto *db=SqliteClient::instance();
+            auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();
+            db->executeQuery("SELECT * FROM calls;", queryRes);
+            if(!queryRes->empty())
+            {
+                auto *root=window();
+                for(const auto &row: *queryRes)
+                {
+                    QVariantMap e;
+                    for(const auto &[key, val]: row)
+                        e.insert(QString::fromStdString(key), QString::fromStdString(val));
+                    QMetaObject::invokeMethod(root, "appendCalls", Q_ARG(QVariant, QVariant::fromValue(e)));
+                }
+            }
+        }
+
     private:
 
     /*signals:
