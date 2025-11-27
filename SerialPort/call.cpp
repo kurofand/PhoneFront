@@ -22,8 +22,8 @@ void Call::saveToDB()
     std::string query="INSERT INTO calls(isReceived, datetime, number, length, isMissed) VALUES("+
                         std::to_string(static_cast<unsigned>(type_))+",\""+datetime_+"\","
                         "\""+number_+"\",\""+callLength_+"\",";
-    query+=missed_;
-    query+=";";
+    query+=missed_+'0';
+    query+=");";
     dbInstance->executeQuery(query.c_str());
 
 }

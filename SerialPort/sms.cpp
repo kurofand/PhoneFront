@@ -89,7 +89,7 @@ void Sms::saveToDB()
     dbInstance->connect();
     std::string query="INSERT INTO sms(isReceived, datetime, number, msg, isReaded)"
                         "VALUES(";
-    query+=received_;
+    query+=received_+'0';
     query+=",\""+datetime_+"\",\""+number_+"\",\""+message_+"\",0);";
     dbInstance->executeQuery(query.c_str());
 

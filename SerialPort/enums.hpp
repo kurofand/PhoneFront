@@ -64,8 +64,8 @@ enum class CallMode
 
 enum class CallType
 {
-    INCOMING=0,
-    OUTGOING=1,
+    OUTGOING=0,
+    INCOMING=1,
     UNKNOWN
 };
 
