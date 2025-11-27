@@ -20,17 +20,14 @@ qt_add_qml_module(appPhoneFront
     VERSION 1.0
     QML_FILES
         Main.qml
-        QML_FILES
-        QML_FILES ui/DialFormButton.qml
-        QML_FILES ui/IncomingCallButton.qml
-        QML_FILES
-        SOURCES
-        QML_FILES ui/CallButton.qml
-        QML_FILES ui/IncomingCallDialog.qml
-        QML_FILES ui/DialDialog.qml
-        QML_FILES ui/CallDialog.qml
         QML_FILES ui/components/StatusText.qml
         QML_FILES ui/components/MarginRow.qml
+        QML_FILES ui/components/CallButton.qml
+        QML_FILES ui/components/DialFormButton.qml
+        QML_FILES ui/components/IncomingCallButton.qml
+        QML_FILES ui/dialogs/IncomingCallDialog.qml
+        QML_FILES ui/dialogs/DialDialog.qml
+        QML_FILES ui/dialogs/CallDialog.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

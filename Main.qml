@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import qmlConnector
+import "./ui/components"
+import "./ui/dialogs"
 
 Window
 {
