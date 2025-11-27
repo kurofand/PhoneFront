@@ -33,11 +33,10 @@ void Phone::requestSignalStrength()
 
 void Phone::call(std::string &&num)
 {
-    std::string command("ATD"+num+";");
+    std::string command("ATD"+num+";\r\n");
     currentCall_=new Call();
     currentCall_->number(num);
 	port_->writeToPort(command.c_str());
-    std::cout<<"ATD request sent"<<std::endl;
 }
 
 void Phone::answer()
