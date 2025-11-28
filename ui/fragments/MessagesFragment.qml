@@ -1,10 +1,9 @@
 import QtQuick 2.15
-import "../components"
 import Qt.labs.qmlmodels
+import "../components"
 
 Item
 {
-
 	ListView
 	{
 		id: list
@@ -12,8 +11,7 @@ Item
 		anchors.fill: parent
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
 		focus: true
-		header: FragmentHeader{text: "Call history"}
-
+		header: FragmentHeader{text: "Message history"}
 		delegate: Item
 		{
 			width: list.width
@@ -23,6 +21,7 @@ Item
 				anchors.fill: parent
 				leftPadding: 5
 				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isReceived=="1"?"↓":"↑"}
+				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isRead=="1"?String.fromCodePoint(0xF32E):String.fromCodePoint(0x2709)}
 				Column
 				{
 					padding: 5

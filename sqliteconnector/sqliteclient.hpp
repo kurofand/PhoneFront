@@ -29,7 +29,7 @@ class SqliteClient
                                   "datetime CHARACTER(19) NOT NULL,"
                                   "number VARCHAR(20) NOT NULL,"
                                   "msg TEXT,"
-                                  "isReaded BOOLEAN NOT NULL CHECK(isReaded IN (0,1)));";
+                                  "isRead BOOLEAN NOT NULL CHECK(isRead IN (0,1)));";
 
         const char* callsTableSQL="CREATE TABLE calls(id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                     "isReceived BOOLEAN NOT NULL CHECK(isReceived IN (0,1)),"

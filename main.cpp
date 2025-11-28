@@ -54,9 +54,20 @@ class QMLConnector: public QQuickItem
 
         Q_INVOKABLE void getCalls()
         {
+            getList("SELECT * FROM calls");
+        }
+
+        Q_INVOKABLE void getMessages()
+        {
+            getList("SELECT * FROM messages");
+        }
+
+    private:
+        void getList(const char* query)
+        {
             auto *db=SqliteClient::instance();
             auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();
-            db->executeQuery("SELECT * FROM calls;", queryRes);
+            db->executeQuery(query, queryRes);
             if(!queryRes->empty())
             {
                 auto *root=window();
@@ -65,12 +76,11 @@ class QMLConnector: public QQuickItem
                     QVariantMap e;
                     for(const auto &[key, val]: row)
                         e.insert(QString::fromStdString(key), QString::fromStdString(val));
-                    QMetaObject::invokeMethod(root, "appendCalls", Q_ARG(QVariant, QVariant::fromValue(e)));
+                    QMetaObject::invokeMethod(root, "appendToList", Q_ARG(QVariant, QVariant::fromValue(e)));
                 }
             }
+            delete queryRes;
         }
-
-    private:
 
     /*signals:
         static void showIncomingForm(std::string &num);*/

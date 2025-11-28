@@ -10,7 +10,7 @@ import "./ui/fragments"
 
 ApplicationWindow
 {
-    width: 400
+    width: 450
     height: 450
     visible: true
     color: root.backgroundColor
@@ -30,73 +30,45 @@ ApplicationWindow
         property bool updatingSignalStrength: false
     }
 
-    ColumnLayout
+    RowLayout
     {
+        anchors.fill: parent
+        spacing: 10
         Loader
         {
             id: lContainer
-            height: 200
-            anchors.left: parent.left
-            anchors.right: parent.right
+            height: parent.height
+            Layout.alignment: Qt.AlignLeft|Qt.AlignTop
+            sourceComponent: cStatus
         }
 
-        spacing: 10
-
-        MarginRow
+        Column
         {
-            Layout.topMargin: 5
+            Layout.alignment: Qt.AlignVCenter
+            spacing: 5
 
-            StatusText{text: "Operator:"}
-            StatusText{id: tOperator; objectName:"tOperator"; text:"Failed to get an operator name"}
-        }
-
-        MarginRow
-        {
-            StatusText{text:"Connection status:"}
-            StatusText{id: tConnectionStatus; objectName:"tConnectionStatus"; text:"CONNECTION_STATUS"}
-        }
-
-        MarginRow
-        {
-            StatusText{text:"Signal strength:"}
-            StatusText{id: tSignalStrength; objectName:"tSignalStrength"; text:"SIGNAL_STRENGTH"}
-        }
-
-        MarginRow
-        {
             Button
             {
                 width: 50
                 height: 50
-                enabled: !root.updatingConnectionStatus&&!root.updatingSignalStrength
-                onClicked: connector.updateStatus()
-                contentItem: Text
-                {
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    font.pointSize: 15
-                    text: "⟳"
-                }
+                onClicked: {lContainer.sourceComponent=cStatus}
             }
+
+            Button
+            {
+                width: 50
+                height: 50
+                onClicked: {lContainer.sourceComponent=cCalls;clearModel();connector.getCalls()}
+            }
+
+            Button
+            {
+                width: 50
+                height: 50
+                onClicked: {lContainer.sourceComponent=cMessages;clearModel();connector.getMessages()}
+            }
+            CallButton{width: 50; height: 50; text: "📞"; onClicked: dDial.open()}
         }
-
-        CallButton{text: "📞"; onClicked: dDial.open()}
-
-    Row
-    {
-    Button
-    {
-        width: 50
-        height: 50
-        onClicked: dIncomingCall.open();
-    }
-    Button
-    {
-        width: 50
-        height: 50
-        onClicked: {lContainer.sourceComponent=cCalls; connector.getCalls()}
-    }
-    }
     }
 
     DialDialog{id: dDial}
@@ -104,10 +76,18 @@ ApplicationWindow
     CallDialog{id: dCall; objectName: "dCall"}
     QMLConnector{id: connector}
 
+    Component{id: cStatus; StatusFragment{}}
+
     Component
     {
         id: cCalls
-        CallsFragment{id:fCalls; model: callModel}
+        CallsFragment{id:fCalls}
+    }
+
+    Component
+    {
+        id: cMessages
+        MessagesFragment{}
     }
 
     ListModel{id: mainModel}
@@ -121,9 +101,14 @@ ApplicationWindow
         }
     }
 
-    function appendCalls(row)
+    function clearModel()
     {
-        callModel.append(row);
+        mainModel.clear();
+    }
+
+    function appendToList(row)
+    {
+        mainModel.append(row);
     }
 
 }
