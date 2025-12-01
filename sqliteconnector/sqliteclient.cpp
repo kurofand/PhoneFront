@@ -38,8 +38,8 @@ void SqliteClient::connect(bool createDB)
 	this->connected=true;
     if(createDB)
     {
-        executeQuery(smsTableSQL);
-        executeQuery(callsTableSQL);
+        for(unsigned i=0;i<(sizeof(tablesToCreate)/sizeof(char*));i++)
+            executeQuery(tablesToCreate[i]);
     }
 }
 

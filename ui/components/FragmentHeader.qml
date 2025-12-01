@@ -4,6 +4,7 @@ Text
 {
 	leftPadding: 5
 	topPadding: 5
+	bottomPadding: 10
 	color: "white"
 	font.pointSize: 14
 }

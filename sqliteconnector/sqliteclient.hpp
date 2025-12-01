@@ -24,19 +24,30 @@ class SqliteClient
         const char* fileName_;
 		bool connected=false;
 
-        const char* smsTableSQL="CREATE TABLE sms(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        //static because to lazy to edit array length on adding/removing tables
+        inline static const char* smsTableSQL="CREATE TABLE sms(id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                   "isReceived BOOLEAN NOT NULL CHECK(isReceived IN (0,1)),"
                                   "datetime CHARACTER(19) NOT NULL,"
                                   "number VARCHAR(20) NOT NULL,"
                                   "msg TEXT,"
                                   "isRead BOOLEAN NOT NULL CHECK(isRead IN (0,1)));";
 
-        const char* callsTableSQL="CREATE TABLE calls(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        inline static const char* callsTableSQL="CREATE TABLE calls(id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                     "isReceived BOOLEAN NOT NULL CHECK(isReceived IN (0,1)),"
                                     "datetime CHARACTER(19) NOT NULL,"
                                     "number VARCHAR(20) NOT NULL,"
                                     "length CHARACTER(5) NOT NULL,"
                                     "isMissed BOOLEAN NOT NULL CHECK(isMissed IN (0,1)));";
+
+        inline static const char* contactsTableSQL="CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                        "name VARCHAR(50) NOT NULL,"
+                                        "memo TEXT);";
+
+        inline static const char* savedNumbersTableSQL="CREATE TABLE savedNumbers(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                           "contactsId INTEGER NOT NULL,"
+                                           "number VARCHAR(20) NOT NULL);";
+
+        inline static const char* tablesToCreate[]={smsTableSQL, callsTableSQL, contactsTableSQL, savedNumbersTableSQL};
 };
 
 #endif

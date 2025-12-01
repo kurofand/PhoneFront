@@ -67,6 +67,13 @@ ApplicationWindow
                 height: 50
                 onClicked: {lContainer.sourceComponent=cMessages;clearModel();connector.getMessages()}
             }
+            Button
+            {
+                width: 50
+                height: 50
+                onClicked: {lContainer.sourceComponent=cContacts;clearModel();connector.getContacts()}
+            }
+
             CallButton{width: 50; height: 50; text: "📞"; onClicked: dDial.open()}
         }
     }
@@ -74,6 +81,7 @@ ApplicationWindow
     DialDialog{id: dDial}
     IncomingCallDialog{id: dIncomingCall; objectName: "dIncomingCall"}
     CallDialog{id: dCall; objectName: "dCall"}
+    ContactDialog{id: dContact; objectName: "dContact"}
     QMLConnector{id: connector}
 
     Component{id: cStatus; StatusFragment{}}
@@ -90,7 +98,10 @@ ApplicationWindow
         MessagesFragment{}
     }
 
+    Component{id: cContacts; ContactsFragment{}}
+
     ListModel{id: mainModel}
+    ListModel{id: subModel}
 
     Timer
     {
@@ -109,6 +120,17 @@ ApplicationWindow
     function appendToList(row)
     {
         mainModel.append(row);
+    }
+
+    function appendToSubList(row)
+    {
+        subModel.append(row);
+    }
+
+    function getContactNumbers(id)
+    {
+        subModel.clear();
+        connector.getNumbers(id);
     }
 
 }
