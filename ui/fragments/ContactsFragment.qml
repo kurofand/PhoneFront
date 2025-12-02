@@ -21,7 +21,7 @@ Item
 				Text{padding:10; text: name}
 				Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter}
 			}
-			MouseArea{anchors.fill: parent; onClicked:{dContact.contactName=name;getContactNumbers(id);dContact.open()}}
+			MouseArea{anchors.fill: parent; onClicked:{dContact.contactName=name;dContact.contactId=id;getContactNumbers(id);dContact.open()}}
 		}
 	}
 

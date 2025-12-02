@@ -70,9 +70,30 @@ class QMLConnector: public QQuickItem
         Q_INVOKABLE void getNumbers(QString id)
         {
             std::string query;
-            query+="SELECT number FROM savedNumbers WHERE contactsId=";
+            query+="SELECT id, contactsId, number FROM savedNumbers WHERE contactsId=";
             query+=id.toStdString();
             getList(query.c_str(), "appendToSubList");
+        }
+
+        Q_INVOKABLE void editDb(QString id, QString table, QString colName, QString newVal)
+        {
+            std::string query="UPDATE "+table.toStdString()+" SET "+colName.toStdString()+"='"+newVal.toStdString()+"' WHERE id="+id.toStdString();
+            auto *db=SqliteClient::instance();
+            db->executeQuery(query.c_str());
+        }
+
+        Q_INVOKABLE void removeFromDb(QString id, QString table)
+        {
+            std::string query="DELETE FROM "+table.toStdString()+" WHERE id="+id.toStdString();
+            auto *db=SqliteClient::instance();
+            db->executeQuery(query.c_str());
+        }
+
+        Q_INVOKABLE void addNumberToDb(QString contactsId, QString number)
+        {
+            std::string query="INSERT INTO savedNumbers(contactsId, number) VALUES("+contactsId.toStdString()+",'"+number.toStdString()+"')";
+            auto *db=SqliteClient::instance();
+            db->executeQuery(query.c_str());
         }
 
     private:
