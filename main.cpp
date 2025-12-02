@@ -164,10 +164,22 @@ int main(int argc, char *argv[])
         phone->requestConnectionStatus();
         sleep(1);
         phone->requestOperatorInfo();
+        auto *dbClient=SqliteClient::instance();
+        dbClient->connect();
+
+        auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();
+        auto *contacts=new std::unordered_map<std::string, std::string>();
+        dbClient->executeQuery("SELECT number, name FROM savedNumbers INNER JOIN contacts ON contactsId=contacts.id", queryRes);
+        for(const auto &row: *queryRes)
+            for(const auto &[key, val]: row)
+                contacts->at(key)=val;
+        delete queryRes;
+        phone->contacts(contacts);
+
     }
     else
         std::cout<<"Error on open port!"<<std::endl;
-
+//TODO: for ui tests, remove later
     auto *dbClient=SqliteClient::instance();
     dbClient->connect();
 

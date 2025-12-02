@@ -204,16 +204,22 @@ void Phone::parseResponse(std::string &str)
                 }
 
                 currentCall_->number(arr[5].substr(1, arr[5].size()-2));
+                //if number in contacts show contactName(number) else just number
+                std::string *number;
+                if(contacts_->find(*currentCall_->number())!=contacts_->end())
+                    *number=contacts_->at(*currentCall_->number())+"("+*currentCall_->number()+")";
+                else
+                    number=currentCall_->number();
 
                 auto *dIncomingCall=findQMLObj("dIncomingCall");
                 if(dIncomingCall)
                 {
                     auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
-                    tIncomingNumber->setProperty("text", currentCall_->number()->c_str());
+                    tIncomingNumber->setProperty("text", number->c_str());
                     QMetaObject::invokeMethod(dIncomingCall, "open");
                 }
 
-                std::string nBody="\"Incoming call from "+*currentCall_->number()+"\"";
+                std::string nBody="\"Incoming call from "+*number+"\"";
                 sendNotification(&nBody);
 
             }
@@ -283,7 +289,12 @@ void Phone::parseResponse(std::string &str)
                     break;
             Sms sms{&pduLine};
             sms.parse();
-            std::string nBody="\"New message from "+*sms.number()+"\"";
+            std::string *number;
+            if(contacts_->find(*sms.number())!=contacts_->end())
+                *number=contacts_->at(*sms.number())+"("+*sms.number()+")";
+            else
+                number=sms.number();
+            std::string nBody="\"New message from "+*number+"\"";
             sendNotification(&nBody);
             sms.saveToDB();
             break;

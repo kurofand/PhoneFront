@@ -10,7 +10,7 @@ class Sms
         void parse();
         void saveToDB();
         const std::string* message(){return &message_;}
-        const std::string* number(){return &number_;}
+        std::string* number(){return &number_;}
         const std::string* datetime(){return &datetime_;}
 
     private:

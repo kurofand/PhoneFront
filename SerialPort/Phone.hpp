@@ -26,6 +26,7 @@ class Phone
         void call(std::string &&num);
         void port(SerialPort *p){port_=p;}
         void engine(QQmlApplicationEngine *engine){engine_=engine;}
+        void contacts(std::unordered_map<std::string, std::string> *c){contacts_=c;}
 		SerialPort* port(){return port_;}
         ~Phone(){};
 	private:
@@ -41,6 +42,8 @@ class Phone
         Call *currentCall_=nullptr;
 		//0-31
 		uint8_t signalStrength_=0;
+        //map for store contacts to replace number with name on incoming call/sms
+        std::unordered_map<std::string, std::string> *contacts_=nullptr;
 
         QQmlApplicationEngine *engine_;
 
