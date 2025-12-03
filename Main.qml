@@ -133,4 +133,10 @@ ApplicationWindow
         connector.getNumbers(id);
     }
 
+    function call(num)
+    {
+        connector.call(num);
+        dCall.number=num;
+        dCall.open();
+    }
 }

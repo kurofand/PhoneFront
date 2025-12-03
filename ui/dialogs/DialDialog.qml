@@ -82,16 +82,6 @@ Dialog
 			NumberButton{text: "#"}
 		}
 
-		CallButton{id: bCall; text: "📞"; onClicked: call(tNumber.text)}
-	}
-
-	//QMLConnector{id: connector}
-
-	function call(num)
-	{
-		connector.call(num);
-		dCall.number=num;
-		dCall.open();
-		close();
+		CallButton{id: bCall; text: "📞"; onClicked: {call(tNumber.text);close()}}
 	}
 }

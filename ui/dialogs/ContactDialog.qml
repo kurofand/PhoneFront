@@ -73,7 +73,7 @@ Dialog
 		property int index
 		id: numberMenu
 		MenuItem{text: "Edit"; onTriggered: dEditNumber.open()}
-		MenuItem{text: "Call"}
+		MenuItem{text: "Call"; onTriggered: {call(subModel.get(numberMenu.index).number);close()}}
 		MenuItem{text: "Message"}
 		MenuItem{text: "Remove"; onTriggered: dRemoveNumber.open()}
 	}
