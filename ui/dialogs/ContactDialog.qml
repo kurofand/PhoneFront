@@ -74,7 +74,7 @@ Dialog
 		id: numberMenu
 		MenuItem{text: "Edit"; onTriggered: dEditNumber.open()}
 		MenuItem{text: "Call"; onTriggered: {call(subModel.get(numberMenu.index).number);close()}}
-		MenuItem{text: "Message"}
+		MenuItem{text: "Message"; onTriggered: {dSendMessage.number=subModel.get(numberMenu.index).number;dSendMessage.open();close()}}
 		MenuItem{text: "Remove"; onTriggered: dRemoveNumber.open()}
 	}
 

@@ -73,6 +73,12 @@ ApplicationWindow
                 height: 50
                 onClicked: {lContainer.sourceComponent=cContacts;clearModel();connector.getContacts()}
             }
+            Button
+            {
+                width: 50
+                height: 50
+                onClicked: {dSendMessage.open()}
+            }
 
             CallButton{width: 50; height: 50; text: "📞"; onClicked: dDial.open()}
         }
@@ -82,6 +88,7 @@ ApplicationWindow
     IncomingCallDialog{id: dIncomingCall; objectName: "dIncomingCall"}
     CallDialog{id: dCall; objectName: "dCall"}
     ContactDialog{id: dContact; objectName: "dContact"}
+    SendMessageDialog{id: dSendMessage; objectName: "dSendMessage"}
     QMLConnector{id: connector}
 
     Component{id: cStatus; StatusFragment{}}
