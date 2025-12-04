@@ -3,6 +3,7 @@
 #include <sstream>
 #include <locale>
 #include <codecvt>
+#include <regex>
 
 #include "../sqliteconnector/sqliteclient.hpp"
 
@@ -81,6 +82,82 @@ void Sms::parse()
     }
     received_=true;
 
+}
+
+std::string* Sms::toPdu()
+{
+    //to awoid leak, but data will be lost
+    if(pdu_!=nullptr)
+        delete pdu_;
+    pdu_=new std::string();
+    //add default SCA
+    *pdu_+="00";
+
+    //PDU-type section, using default params:
+    //RP - not defined
+    //UDHI - SMS body only
+    //SRR - not requested
+    //VPF - no VP field
+    //RD - resend
+    //MTI - sended SMS
+    //00000001 -> 0x01
+    *pdu_+="01";
+
+    //MR - default 00
+    *pdu_+="00";
+
+    //DA section
+    {
+        auto r=std::regex("[^\\d]");
+        std::string clearNumber=regex_replace(number_, r, "");
+    //PL - number length, 2 digit hex. counts only numbers, ignoring all symbols including "+"
+        {
+            std::stringstream ss;
+            ss<<std::hex<<clearNumber.length();
+            auto tmp=ss.str();
+            *pdu_+=tmp.length()>1?tmp:"0"+tmp;
+        }
+    //PT - 2 digit hex, 91 for international number format and 81 for local
+        *pdu_+=number_[0]=='+'?"91":"81";
+    //RP - number, same logic with decoding pdu on receive message
+        if(clearNumber.length()%2!=0)
+            clearNumber+='F';
+        for(unsigned i=0;i<clearNumber.length();i+=2)
+        {
+            pdu_->push_back(clearNumber[i+1]);
+            pdu_->push_back(clearNumber[i]);
+        }
+    }
+
+    //PID section, default
+    *pdu_+="00";
+
+    //DCS section, set UCS2, default messages
+    *pdu_+="08";
+
+    //VP not used, so just skip
+    //UDL section, 2 byte per symbol in hex
+    {
+        std::stringstream ss;
+        ss<<std::hex<<(message_.length()*2);
+        *pdu_+=ss.str();
+    }
+    //UD section
+    {
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        std::wstring msg=converter.from_bytes(message_);
+        for(auto &c: msg)
+        {
+            std::stringstream ss;
+            ss<<std::hex<<static_cast<int>(c);
+            std::string hex=ss.str();
+            while(hex.size()<4)
+                hex="0"+hex;
+            *pdu_+=hex;
+        }
+    }
+
+    return pdu_;
 }
 
 void Sms::saveToDB()

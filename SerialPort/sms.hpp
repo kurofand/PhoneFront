@@ -12,9 +12,11 @@ class Sms
         const std::string* message(){return &message_;}
         std::string* number(){return &number_;}
         const std::string* datetime(){return &datetime_;}
+        std::string* toPdu();
+        std::string* pdu(){return pdu_;}
 
     private:
-        std::string *pdu_;
+        std::string *pdu_=nullptr;
         std::string message_;
         std::string number_;
         std::string datetime_;

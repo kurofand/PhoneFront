@@ -1,6 +1,5 @@
 #include "Phone.hpp"
 #include "maps.hpp"
-#include "sms.cpp"
 
 #include <sstream>
 #include <stdio.h>
@@ -65,6 +64,19 @@ void Phone::readAndDeleteMessage(const char* mesId)
     command+=mesId;
     command+="\r\n";
     port_->writeToPort(command.c_str());
+}
+
+void Phone::sendSms(Sms *sms)
+{
+    std::string command("AT+CMGS=");
+    //size exclude SCA part and divided by 2 since 2 symbol per byte
+    command+=(sms->pdu()->size()-2)/2;
+    command+='\r';
+    command+=*sms->pdu();
+    command+=static_cast<char>(26);
+    command+="\r\n";
+    port_->writeToPort(command.c_str());
+    delete sms->pdu();
 }
 
 //TODO: maybe add AT+CPAS command to get current call status

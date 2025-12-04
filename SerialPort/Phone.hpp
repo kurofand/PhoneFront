@@ -4,6 +4,7 @@
 #include "enums.hpp"
 #include "call.cpp"
 #include "SerialPort.cpp"
+#include "sms.cpp"
 #include <qqmlapplicationengine.h>
 
 class Phone
@@ -24,6 +25,7 @@ class Phone
 		void disconnect();
 		void hangUp();
         void call(std::string &&num);
+        void sendSms(Sms *sms);
         void port(SerialPort *p){port_=p;}
         void engine(QQmlApplicationEngine *engine){engine_=engine;}
         void contacts(std::unordered_map<std::string, std::string> *c){contacts_=c;}

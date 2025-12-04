@@ -39,6 +39,8 @@ enum class ATResponse
     MISSED_CALL,
     CMTI,
     CMGRD,
+    CMGS,
+    CMS_ERROR,
 	UNKNOWN
 };
 

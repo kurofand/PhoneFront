@@ -55,6 +55,8 @@ Dialog
 			Layout.fillHeight: true
 			wrapMode: TextEdit.Wrap
 			//limit message length to 255. if not ui goes wild
+			//Alarm! max message length for PDU UCS2 is 140 bytes or 70 symbols, so
+			//TODO: set max message length to 70 or split message to several on send event
 			onTextChanged:
 			{
 				if(teMessage.text.length>255)
