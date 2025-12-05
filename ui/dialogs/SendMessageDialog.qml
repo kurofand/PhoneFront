@@ -75,6 +75,7 @@ Dialog
 				verticalAlignment: Text.AlignVCenter
 				text: "send"
 			}
+			onClicked: connector.sendSMS(tiNumber.text, teMessage.text)
 		}
 	}
 }

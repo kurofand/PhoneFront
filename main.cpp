@@ -11,6 +11,7 @@
 //#include "qmlconnector.hpp"
 #include "SerialPort/Phone.cpp"
 #include "sqliteconnector/sqliteclient.cpp"
+#include "SerialPort/sms.hpp"
 
 
 class QMLConnector: public QQuickItem
@@ -94,6 +95,17 @@ class QMLConnector: public QQuickItem
             std::string query="INSERT INTO savedNumbers(contactsId, number) VALUES("+contactsId.toStdString()+",'"+number.toStdString()+"')";
             auto *db=SqliteClient::instance();
             db->executeQuery(query.c_str());
+        }
+
+        Q_INVOKABLE void sendSMS(QString number, QString msg)
+        {
+            auto *sms=new Sms();
+            sms->number(std::move(number.toStdString()));
+            sms->message(std::move(msg.toStdString()));
+            sms->toPdu();
+            Phone::getInstance()->sendSms(sms);
+            //sms instance will be deleted after send, no need to free here
+
         }
 
     private:

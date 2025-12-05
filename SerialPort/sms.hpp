@@ -6,10 +6,13 @@
 class Sms
 {
     public:
+        Sms(){};
         Sms(std::string *pdu): pdu_(pdu){};
         void parse();
         void saveToDB();
+        void message(std::string &&msg){message_=msg;}
         const std::string* message(){return &message_;}
+        void number(std::string &&n){number_=n;}
         std::string* number(){return &number_;}
         const std::string* datetime(){return &datetime_;}
         std::string* toPdu();

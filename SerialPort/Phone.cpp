@@ -77,6 +77,8 @@ void Phone::sendSms(Sms *sms)
     command+="\r\n";
     port_->writeToPort(command.c_str());
     delete sms->pdu();
+    sms->saveToDB();
+    delete sms;
 }
 
 //TODO: maybe add AT+CPAS command to get current call status

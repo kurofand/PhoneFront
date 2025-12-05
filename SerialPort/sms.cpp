@@ -5,6 +5,9 @@
 #include <codecvt>
 #include <regex>
 
+#include <chrono>
+#include <iomanip>
+
 #include "../sqliteconnector/sqliteclient.hpp"
 
 void Sms::parse()
@@ -156,6 +159,17 @@ std::string* Sms::toPdu()
             *pdu_+=hex;
         }
     }
+
+    //not part of pdu, but message sent time should be in db
+    //not chrono+format bc my rpy has outdated gcc w/o std::format
+    auto now=std::chrono::system_clock::now();
+    auto timet=std::chrono::system_clock::to_time_t(now);
+    auto tm=*std::localtime(&timet);
+    std::stringstream ss;
+    ss<<std::put_time(&tm, "%d/%m/%Y %H:%M:%S");
+    datetime_=ss.str();
+    //also mark instance as sent message
+    received_=false;
 
     return pdu_;
 }
