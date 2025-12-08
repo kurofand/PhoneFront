@@ -22,20 +22,20 @@ class QMLConnector: public QQuickItem
         Q_INVOKABLE void answer()
         {
             auto *phone=Phone::getInstance();
-            if(phone->port())
+            if(phone->connectionAlive())
                 phone->answer();
         }
         Q_INVOKABLE void reject()
         {
             auto *phone=Phone::getInstance();
-            if(phone->port())
+            if(phone->connectionAlive())
                 phone->disconnect();
         };
 
         Q_INVOKABLE void call(QString num)
         {
             auto *phone=Phone::getInstance();
-            if(phone->port())
+            if(phone->connectionAlive())
                 phone->call(std::move(num.toStdString()));
         }
 
@@ -99,12 +99,15 @@ class QMLConnector: public QQuickItem
 
         Q_INVOKABLE void sendSMS(QString number, QString msg)
         {
-            auto *sms=new Sms();
-            sms->number(std::move(number.toStdString()));
-            sms->message(std::move(msg.toStdString()));
-            sms->toPdu();
-            Phone::getInstance()->sendSms(sms);
+            if(Phone::getInstance()->port())
+            {
+                auto *sms=new Sms();
+                sms->number(std::move(number.toStdString()));
+                sms->message(std::move(msg.toStdString()));
+                sms->toPdu();
+                Phone::getInstance()->sendSms(sms);
             //sms instance will be deleted after send, no need to free here
+            }
 
         }
 

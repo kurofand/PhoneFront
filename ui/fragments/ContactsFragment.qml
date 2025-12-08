@@ -1,15 +1,20 @@
 import QtQuick 2.15
 import Qt.labs.qmlmodels
+import QtQuick.Layouts
 import "../components"
 
-Item
+ColumnLayout
 {
+	spacing: 10
+	FragmentHeader{text: "Contacts"}
 	ListView
 	{
 		id: list
 		model: mainModel
-		anchors.fill: parent
-		header: FragmentHeader{text: "Contacts"}
+		width: parent.width
+		height: parent.height
+		//Layout.fillWidth: true
+		//Layout.fillHeight: true
 		delegate: Item
 		{
 			width: list.width

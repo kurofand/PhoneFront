@@ -1,9 +1,12 @@
 import QtQuick 2.15
+import QtQuick.Layouts
 import Qt.labs.qmlmodels
 import "../components"
 
-Item
+ColumnLayout
 {
+	spacing: 10
+	FragmentHeader{text: "Message history"}
 	ListView
 	{
 		id: list
@@ -11,7 +14,6 @@ Item
 		anchors.fill: parent
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
 		focus: true
-		header: FragmentHeader{text: "Message history"}
 		delegate: Item
 		{
 			width: list.width
