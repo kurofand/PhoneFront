@@ -33,7 +33,7 @@ void Phone::requestSignalStrength()
 void Phone::call(std::string &&num)
 {
     std::string command("ATD"+num+";\r\n");
-    currentCall_=new Call();
+    currentCall_=new Call(CallType::OUTGOING);
     currentCall_->number(num);
 	port_->writeToPort(command.c_str());
 }

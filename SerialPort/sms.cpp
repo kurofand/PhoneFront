@@ -49,6 +49,7 @@ void Sms::parse()
     currentPos+=2;
 
     //get datetime, same as sender number octets are reversed, format is yy mm dd HH MM SS
+    //timezone info - last 2 digits, skip
     {
         auto dateStart=currentPos;
         std::string tmp;
@@ -63,13 +64,11 @@ void Sms::parse()
         day=tmp.substr(4, 2);
         hour=tmp.substr(6, 2);
         min=tmp.substr(8, 2);
-        day=tmp.substr(10, 2);
+        sec=tmp.substr(10, 2);
         datetime_=day+"/"+mon+"/"+year+" "+hour+":"+min+":"+sec;
 
     }
 
-    //skip timezone info
-    currentPos+=2;
     //skip TP-UDL - length of data. for basic sms data will be from current point to the end of the message
     currentPos+=2;
 
@@ -178,7 +177,7 @@ void Sms::saveToDB()
 {
     auto *dbInstance=SqliteClient::instance();
     dbInstance->connect();
-    std::string query="INSERT INTO sms(isReceived, datetime, number, msg, isReaded)"
+    std::string query="INSERT INTO sms(isReceived, datetime, number, msg, isRead) "
                         "VALUES(";
     query+=received_+'0';
     query+=",\""+datetime_+"\",\""+number_+"\",\""+message_+"\",0);";
