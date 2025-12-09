@@ -10,11 +10,10 @@ ColumnLayout
 	ListView
 	{
 		id: list
+		width: window.width-cRightButtons.width-15
 		model: mainModel
-		anchors.fill: parent
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
 		focus: true
-
 		delegate: Item
 		{
 			width: list.width

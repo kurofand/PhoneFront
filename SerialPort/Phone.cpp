@@ -251,8 +251,6 @@ void Phone::parseResponse(std::string &str)
             if(responseStr.find("END:")!=std::string::npos)
             {
                 std::cout<<"END";
-                delete currentCall_;
-                currentCall_=nullptr;
                 auto *dCall=findQMLObj("dCall");
                 if(dCall)
                 {
@@ -301,6 +299,7 @@ void Phone::parseResponse(std::string &str)
             while(getline(ss, pduLine, '\n'))
                 if(i++==1)
                     break;
+            removeNewLine(&pduLine);
             Sms sms{&pduLine};
             sms.parse();
             std::string *number;

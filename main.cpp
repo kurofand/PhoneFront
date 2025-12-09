@@ -60,7 +60,7 @@ class QMLConnector: public QQuickItem
 
         Q_INVOKABLE void getMessages()
         {
-            getList("SELECT * FROM messages");
+            getList("SELECT * FROM sms");
         }
 
         Q_INVOKABLE void getContacts()

@@ -5,16 +5,15 @@ import "../components"
 
 ColumnLayout
 {
+	width: parent.width
+	height: parent.height
 	spacing: 10
 	FragmentHeader{text: "Contacts"}
 	ListView
 	{
 		id: list
+		width: window.width-cRightButtons.width-15
 		model: mainModel
-		width: parent.width
-		height: parent.height
-		//Layout.fillWidth: true
-		//Layout.fillHeight: true
 		delegate: Item
 		{
 			width: list.width

@@ -10,6 +10,7 @@ import "./ui/fragments"
 
 ApplicationWindow
 {
+    id:window
     width: 450
     height: 450
     visible: true
@@ -37,6 +38,7 @@ ApplicationWindow
         Loader
         {
             id: lContainer
+            width: window.width-cRightButtons.width
             height: parent.height
             Layout.alignment: Qt.AlignLeft|Qt.AlignTop
             sourceComponent: cStatus
@@ -44,6 +46,7 @@ ApplicationWindow
 
         Column
         {
+            id: cRightButtons
             Layout.alignment: Qt.AlignVCenter
             spacing: 5
 
@@ -58,20 +61,20 @@ ApplicationWindow
             {
                 width: 50
                 height: 50
-                onClicked: {lContainer.sourceComponent=cCalls;clearModel();connector.getCalls()}
+                onClicked: {clearModel();connector.getCalls();lContainer.sourceComponent=cCalls;lContainer.width=window.width-cRightButtons.width}
             }
 
             Button
             {
                 width: 50
                 height: 50
-                onClicked: {lContainer.sourceComponent=cMessages;clearModel();connector.getMessages()}
+                onClicked: {clearModel();connector.getMessages();lContainer.sourceComponent=cMessages;}
             }
             Button
             {
                 width: 50
                 height: 50
-                onClicked: {lContainer.sourceComponent=cContacts;clearModel();connector.getContacts()}
+                onClicked: {clearModel();connector.getContacts();lContainer.sourceComponent=cContacts;}
             }
             Button
             {

@@ -5,13 +5,15 @@ import "../components"
 
 ColumnLayout
 {
+	width: parent.width
+	height: parent.height
 	spacing: 10
 	FragmentHeader{text: "Message history"}
 	ListView
 	{
 		id: list
 		model: mainModel
-		anchors.fill: parent
+		width: window.width-cRightButtons.width-15
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
 		focus: true
 		delegate: Item
