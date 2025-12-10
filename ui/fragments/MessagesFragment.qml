@@ -1,10 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Layouts
 import Qt.labs.qmlmodels
+import QtQuick.Controls
 import "../components"
 
 ColumnLayout
 {
+	property var activeMessage: mainModel.get(0)
+	property int activeMessageIndex: 0
 	width: parent.width
 	height: parent.height
 	spacing: 10
@@ -14,6 +17,7 @@ ColumnLayout
 		id: list
 		model: mainModel
 		width: window.width-cRightButtons.width-15
+		height: window.height*0.6
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
 		focus: true
 		delegate: Item
@@ -25,7 +29,7 @@ ColumnLayout
 				anchors.fill: parent
 				leftPadding: 5
 				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isReceived=="1"?"↓":"↑"}
-				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isRead=="1"?String.fromCodePoint(0xF32E):String.fromCodePoint(0x2709)}
+				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isRead=="1"?"R":"U"}
 				Column
 				{
 					padding: 5
@@ -33,7 +37,43 @@ ColumnLayout
 					Text{text: number}
 				}
 			}
-		MouseArea{anchors.fill: parent;onClicked: list.currentIndex=index}
+		MouseArea{anchors.fill: parent;onClicked: {list.currentIndex=index; activeMessageIndex=index}}
+		}
+	}
+	Rectangle{width: parent.width; height: 1}
+	Text
+	{
+		id: tMessage
+		leftPadding: 10
+		text: activeMessage.msg
+	}
+	Row
+	{
+		Layout.alignment: Qt.AlignHCenter
+		spacing: 10
+		Button
+		{
+			onClicked:
+			{
+				let message=mainModel.get(activeMessageIndex)
+				connector.setSMSStatus(message.isRead==="1"?false:true, message.id)
+				mainModel.get(activeMessageIndex).isRead=message.isRead==="1"?"0":"1"
+				btChangeMark.text=mainModel.get(activeMessageIndex).isRead==="1"?"Mark as unread":"Mark as read"
+			}
+			contentItem: Text
+			{
+				id: btChangeMark
+				text: mainModel.get(activeMessageIndex).isRead==="1"?"Mark as unread":"Mark as read"
+			}
+		}
+		Button
+		{
+			onClicked: {dSendMessage.number=mainModel.get(activeMessageIndex).number; dSendMessage.open()}
+			contentItem: Text
+			{
+				horizontalAlignment: Text.AlignHCenter
+				text: "Reply"
+			}
 		}
 	}
 }

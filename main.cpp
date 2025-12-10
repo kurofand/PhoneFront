@@ -111,6 +111,14 @@ class QMLConnector: public QQuickItem
 
         }
 
+        Q_INVOKABLE void setSMSStatus(bool read, QString id)
+        {
+            std::string query="UPDATE sms SET isRead=";
+            query+=read+'0';
+            query+=" WHERE id="+id.toStdString();
+            SqliteClient::instance()->executeQuery(query.c_str());
+        }
+
     private:
         void getList(const char* query, const char* qmlFunc="appendToList")
         {
