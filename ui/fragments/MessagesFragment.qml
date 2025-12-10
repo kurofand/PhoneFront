@@ -6,7 +6,6 @@ import "../components"
 
 ColumnLayout
 {
-	property var activeMessage: mainModel.get(0)
 	property int activeMessageIndex: 0
 	width: parent.width
 	height: parent.height
@@ -37,7 +36,7 @@ ColumnLayout
 					Text{text: number}
 				}
 			}
-		MouseArea{anchors.fill: parent;onClicked: {list.currentIndex=index; activeMessageIndex=index}}
+		MouseArea{anchors.fill: parent;onClicked: {list.currentIndex=index; activeMessageIndex=index; tMessage.text=mainModel.get(activeMessageIndex).msg}}
 		}
 	}
 	Rectangle{width: parent.width; height: 1}
@@ -45,7 +44,7 @@ ColumnLayout
 	{
 		id: tMessage
 		leftPadding: 10
-		text: activeMessage.msg
+		text: mainModel.get(0).msg
 	}
 	Row
 	{
@@ -73,6 +72,15 @@ ColumnLayout
 			{
 				horizontalAlignment: Text.AlignHCenter
 				text: "Reply"
+			}
+		}
+		Button
+		{
+			onClicked: {connector.deleteSMS(mainModel.get(activeMessageIndex).id); mainModel.remove(activeMessageIndex)}
+			contentItem: Text
+			{
+				horizontalAlignment: Text.AlignHCenter
+				text: "Delete"
 			}
 		}
 	}

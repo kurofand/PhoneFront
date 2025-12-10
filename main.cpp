@@ -119,6 +119,28 @@ class QMLConnector: public QQuickItem
             SqliteClient::instance()->executeQuery(query.c_str());
         }
 
+        Q_INVOKABLE void deleteSMS(QString id="")
+        {
+            std::string query="DELETE FROM sms";
+            if(id!="")
+                query+=" WHERE id="+id.toStdString();
+            SqliteClient::instance()->executeQuery(query.c_str());
+        }
+
+        Q_INVOKABLE void addContact(QString name)
+        {
+            std::string query="INSERT INTO contacts(name) VALUES(\""+name.toStdString()+"\")";
+            SqliteClient::instance()->executeQuery(query.c_str());
+            getContacts();
+        }
+
+        Q_INVOKABLE void editContact(int id, QString name)
+        {
+            std::string query="UPDATE contacts SET name=\""+name.toStdString()+"\" WHERE id="+std::to_string(id);
+            SqliteClient::instance()->executeQuery(query.c_str());
+            getContacts();
+        }
+
     private:
         void getList(const char* query, const char* qmlFunc="appendToList")
         {

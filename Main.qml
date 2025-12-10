@@ -92,6 +92,7 @@ ApplicationWindow
     CallDialog{id: dCall; objectName: "dCall"}
     ContactDialog{id: dContact; objectName: "dContact"}
     SendMessageDialog{id: dSendMessage; objectName: "dSendMessage"}
+    AddEditContactDialog{id: dAddEditContact}
     QMLConnector{id: connector}
 
     Component{id: cStatus; StatusFragment{}}
