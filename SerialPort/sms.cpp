@@ -138,16 +138,17 @@ std::string* Sms::toPdu()
     *pdu_+="08";
 
     //VP not used, so just skip
-    //UDL section, 2 byte per symbol in hex
-    {
-        std::stringstream ss;
-        ss<<std::hex<<(message_.length()*2);
-        *pdu_+=ss.str();
-    }
     //UD section
     {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
         std::wstring msg=converter.from_bytes(message_);
+        //UDL section, 2 byte per symbol in hex
+        //wstring for get actual size of non latin chars string
+        {
+            std::stringstream ss;
+            ss<<std::hex<<msg.length()*2;
+            *pdu_+=ss.str();
+        }
         for(auto &c: msg)
         {
             std::stringstream ss;

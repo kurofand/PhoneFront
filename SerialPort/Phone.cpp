@@ -72,7 +72,8 @@ void Phone::sendSms(Sms *sms)
     //size exclude SCA part and divided by 2 since 2 symbol per byte
     command+=(sms->pdu()->size()-2)/2;
     command+='\r';
-    command+=*sms->pdu();
+    port_->writeToPort(command.c_str());
+    command=*sms->pdu();
     command+=static_cast<char>(26);
     command+="\r\n";
     port_->writeToPort(command.c_str());
