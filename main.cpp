@@ -155,6 +155,8 @@ class QMLConnector: public QQuickItem
                     QVariantMap e;
                     for(const auto &[key, val]: row)
                         e.insert(QString::fromStdString(key), QString::fromStdString(val));
+                    if(row.find("number")!=row.end()&&Phone::getInstance()->contacts()!=nullptr)
+                        e.insert("name", QString::fromStdString(Phone::getInstance()->contacts()->at(row.at("number"))));
                     QMetaObject::invokeMethod(root, qmlFunc, Q_ARG(QVariant, QVariant::fromValue(e)));
                 }
             }
@@ -232,13 +234,11 @@ int main(int argc, char *argv[])
         phone->requestOperatorInfo();
         auto *dbClient=SqliteClient::instance();
         dbClient->connect();
-
         auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();
         auto *contacts=new std::unordered_map<std::string, std::string>();
         dbClient->executeQuery("SELECT number, name FROM savedNumbers INNER JOIN contacts ON contactsId=contacts.id", queryRes);
         for(const auto &row: *queryRes)
-            for(const auto &[key, val]: row)
-                contacts->at(key)=val;
+            contacts->insert(std::pair<std::string, std::string>{row.at("number"), row.at("name")});
         delete queryRes;
         phone->contacts(contacts);
 

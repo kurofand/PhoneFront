@@ -18,7 +18,9 @@ Dialog
 	{
 		tiNumber.text=""
 		teMessage.text=""
+		number=""
 	}
+	onOpened: tiNumber.text=number
 
 	ColumnLayout
 	{

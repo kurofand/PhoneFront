@@ -29,6 +29,7 @@ class Phone
         void port(SerialPort *p){port_=p;}
         void engine(QQmlApplicationEngine *engine){engine_=engine;}
         void contacts(std::unordered_map<std::string, std::string> *c){contacts_=c;}
+        std::unordered_map<std::string, std::string>* contacts(){return contacts_;}
 		SerialPort* port(){return port_;}
         //TODO: test this. maybe there are problems with status_ val
         bool connectionAlive(){return port_&&(status_==ConnectionStatus::REG||status_==ConnectionStatus::ROAMING)&&signalStrength_>0;}
