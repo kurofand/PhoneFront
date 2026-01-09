@@ -9,10 +9,11 @@
 #include <iomanip>
 
 #include "../sqliteconnector/sqliteclient.hpp"
+#include "../Log/log.hpp"
 
 void Sms::parse()
 {
-    std::cout<<"parsing"<<std::endl;
+    Log(LogLevel::Debug)<<"Start pdu parse";
     size_t numLength=0;
     strHexToDec(&numLength, 0);
 
@@ -83,11 +84,13 @@ void Sms::parse()
         message_+=converter.to_bytes(val);
     }
     received_=true;
+    Log(LogLevel::Debug)<<"Pdu parsing complete";
 
 }
 
 std::string* Sms::toPdu()
 {
+    Log(LogLevel::Debug)<<"Creating pdu from sms object";
     //to awoid leak, but data will be lost
     if(pdu_!=nullptr)
         delete pdu_;
@@ -170,6 +173,7 @@ std::string* Sms::toPdu()
     datetime_=ss.str();
     //also mark instance as sent message
     received_=false;
+    Log(LogLevel::Debug)<<"Pdu completed";
 
     return pdu_;
 }

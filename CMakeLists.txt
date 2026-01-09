@@ -10,9 +10,9 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(SQLite3 REQUIRED)
 
-
 qt_add_executable(appPhoneFront
     main.cpp
+    Log/log.cpp
 )
 
 qt_add_qml_module(appPhoneFront

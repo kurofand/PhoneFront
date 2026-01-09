@@ -1,5 +1,6 @@
 #include "Phone.hpp"
 #include "maps.hpp"
+#include "Log/log.hpp"
 
 #include <sstream>
 #include <stdio.h>
@@ -86,7 +87,7 @@ void Phone::sendSms(Sms *sms)
 
 void Phone::parseResponse(std::string &str)
 {
-	std::cout<<"Parsing response..."<<std::endl;
+    Log(LogLevel::Debug)<<"Message from the port, parsing...";
 	std::string commandKey;
 	std::string responseStr;
 //most common requests return value like "command: response"
@@ -103,14 +104,16 @@ void Phone::parseResponse(std::string &str)
         commandKey=str;
         removeNewLine(&commandKey);
     }
-	std::cout<<"|"<<commandKey<<"|"<<std::endl;
-	std::cout<<responseStr<<"|"<<std::endl;
+
+    Log(LogLevel::Debug)<<"Command: ["<<commandKey<<"]";
+    Log(LogLevel::Debug)<<"Body: ["<<responseStr<<"]";
+
 	ATResponse command=responseMap.find(commandKey)!=responseMap.end()?responseMap[commandKey]:ATResponse::UNKNOWN;
 	switch(command)
 	{
 		case ATResponse::CSQ:
 		{
-			std::cout<<"Response to CSQ request...";
+            Log(LogLevel::Debug)<<"Response to CSQ request...";
 			auto commPos=responseStr.find(',');
 //TODO: error handling for failing parse signal value
 			if(commPos!=std::string::npos)
@@ -121,10 +124,10 @@ void Phone::parseResponse(std::string &str)
 				}
 				catch(const std::exception &e)
 				{
-					std::cout<<"failed"<<std::endl;
+                    Log(LogLevel::Error)<<"Failed to parse CSQ request, exception: "<<e.what();
 					break;
 				}
-			std::cout<<"parsed successfully. Result:"<<signalStrength_<<std::endl;
+            Log(LogLevel::Debug)<<"OK, result: "<<signalStrength_;
             auto *tSignalStrength=findQMLObj("tSignalStrength");
             if(tSignalStrength)
                 tSignalStrength->setProperty("text", signalStrength_);
@@ -135,17 +138,17 @@ void Phone::parseResponse(std::string &str)
 		}
 		case ATResponse::CNUM:
 		{
-			std::cout<<"Response to CNUM request...";
+            Log(LogLevel::Debug)<<"Response to CNUM request...";
 			auto commPos=responseStr.find(',');
 			responseStr=responseStr.substr(commPos+1);
 			commPos=responseStr.find(',');
 			number_=responseStr.substr(0, commPos);
-			std::cout<<"parsed successfully. Result:"<<number_<<std::endl;
+            Log(LogLevel::Debug)<<"OK, result: "<<number_;
 			break;
 		}
 		case ATResponse::COPS:
 		{
-			std::cout<<"Response to COPS request...";
+            Log(LogLevel::Debug)<<"Response to COPS request...";
 			std::stringstream ss(responseStr);
 			std::string line;
             std::string arr[4];
@@ -153,7 +156,7 @@ void Phone::parseResponse(std::string &str)
 			while(getline(ss, line, ','))
 				arr[i++]=line;
             operatorName_=arr[2];
-			std::cout<<"parsed successfully. Result:"<<operatorName_<<std::endl;
+            Log(LogLevel::Debug)<<"OK, result: "<<operatorName_;
             auto *tOperator=findQMLObj("tOperator");
             if(tOperator)
                 tOperator->setProperty("text", operatorName_.c_str());
@@ -161,7 +164,7 @@ void Phone::parseResponse(std::string &str)
 		}
 		case ATResponse::CREG:
 		{
-			std::cout<<"Response to CREG request...";
+            Log(LogLevel::Debug)<<"Response to CREG request...";
             //erase OK\r\n
             removeNewLine(&responseStr);
             responseStr.erase(responseStr.end()-2, responseStr.end());
@@ -171,12 +174,13 @@ void Phone::parseResponse(std::string &str)
 			if(responseStr.size()==3)
 			{
                 status_=static_cast<ConnectionStatus>(responseStr[2]-'0');
+                Log(LogLevel::Debug)<<"OK, result: "<<connectionStatus.at(status_);
                 auto *tStatus=findQMLObj("tConnectionStatus");
                 if(tStatus)
                     tStatus->setProperty("text", connectionStatus.at(status_));
-                //connectionType_=static_cast<ConnectionType>(responseStr[2]);
-                //std::cout<<"parsed successfully. Result:"<<static_cast<uint8_t>(status_)<<", "<<static_cast<uint8_t>(connectionType_)<<std::endl;
 			}
+            else
+                Log(LogLevel::Warning)<<"Unexpected length on CREG response, skip. Response: "<<responseStr;
             auto *root=findQMLObj("root");
             if(root)
                 root->setProperty("updatingConnectionStatus", false);
@@ -184,7 +188,7 @@ void Phone::parseResponse(std::string &str)
 		}
 		case ATResponse::RING:
 		{
-			std::cout<<"RING request came"<<std::endl;
+            Log(LogLevel::Debug)<<"RING signal";
             if(currentCall_==nullptr)
                 currentCall_=new Call(CallType::INCOMING);
 			break;
@@ -195,6 +199,7 @@ void Phone::parseResponse(std::string &str)
         //dialed pattern: create call on ATD, set number on ATD, ignore all CLCC
 		case ATResponse::CLCC:
 		{
+            Log(LogLevel::Debug)<<"CLCC signal/response";
             if(currentCall_&&currentCall_->number()->empty())
             {
                 std::string s;
@@ -203,8 +208,10 @@ void Phone::parseResponse(std::string &str)
                 uint8_t i=0;
                 while(getline(ss, s, ','))
                     arr[i++]=s;
+                Log(LogLevel::Debug)<<"Parsing call info...";
                 try
                 {
+
                     //TODO: add checking and handling for wrong sizes
                     size_t convertedSize=0;
                     currentCall_->status(std::stoi(arr[2], &convertedSize));
@@ -215,7 +222,12 @@ void Phone::parseResponse(std::string &str)
                 }
                 catch(std::exception &e)
                 {
-
+                    std::string logMsg{"Error occured on parsing CLCC response! Response body: "};
+                    i=0;
+                    while(i<7)
+                        logMsg+="\""+arr[i++]+"\",";
+                    logMsg.pop_back();
+                    Log(LogLevel::Error)<<logMsg<<". Exception: "<<e.what();
                 }
 
                 currentCall_->number(arr[5].substr(1, arr[5].size()-2));
@@ -226,6 +238,7 @@ void Phone::parseResponse(std::string &str)
                 else
                     number=currentCall_->number();
 
+                Log(LogLevel::Debug)<<"OK";
                 auto *dIncomingCall=findQMLObj("dIncomingCall");
                 if(dIncomingCall)
                 {
@@ -248,10 +261,10 @@ void Phone::parseResponse(std::string &str)
         //TODO: add to end call cases feature to save call history
         case ATResponse::VOICE_CALL:
         {
-            std::cout<<"voice call ";
+            Log(LogLevel::Debug)<<"Voice call signal";
             if(responseStr.find("END:")!=std::string::npos)
             {
-                std::cout<<"END";
+                Log(LogLevel::Debug)<<"Voice call END";
                 auto *dCall=findQMLObj("dCall");
                 if(dCall)
                 {
@@ -269,21 +282,19 @@ void Phone::parseResponse(std::string &str)
             }
             else if(responseStr.find("BEGIN")!=std::string::npos)
             {
-                std::cout<<"BEGIN";
+                Log(LogLevel::Debug)<<"Voice call BEGIN";
                 auto *dCall=findQMLObj("dCall");
                 if(dCall)
                 {
-                    std::cout<<"call dialog found"<<std::endl;
                     dCall->setProperty("connected", true);
                     dCall->setProperty("runTimer", true);
                 }
             }
-            std::cout<<std::endl;
             break;
         }
         case ATResponse::CMTI:
         {
-            std::cout<<"CMTI request came"<<std::endl;
+            Log(LogLevel::Debug)<<"CMTI signal";
             //TODO:
             //There is a CMGRD command(read and delete) so parsing for a actual id
             //is not necessary, but probably it is better to support non first message
@@ -292,7 +303,7 @@ void Phone::parseResponse(std::string &str)
         }
         case ATResponse::CMGRD:
         {
-            std::cout<<"CMGRD response came"<<std::endl;
+            Log(LogLevel::Debug)<<"CMGRD signal";
             uint8_t i=0;
             std::stringstream ss(responseStr);
             std::string pduLine;
@@ -335,10 +346,6 @@ void Phone::parseResponse(std::string &str)
 	};
 
 /*
-Incoming and missed call:
-RING
-
-+CLCC: 4,1,4,0,0,"08020866256",128
 // id, dir, stat, mode, mpty, number, type
 RING
 

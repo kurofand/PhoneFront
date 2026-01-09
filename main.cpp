@@ -12,6 +12,7 @@
 #include "SerialPort/Phone.cpp"
 #include "sqliteconnector/sqliteclient.cpp"
 #include "SerialPort/sms.hpp"
+#include "Log/log.hpp"
 
 
 class QMLConnector: public QQuickItem
@@ -185,7 +186,7 @@ void listen(Phone *phone)
         else if(read<0)
         {
             int e=errno;
-            std::cout<<"An error occured on read: "<<strerror(e)<<std::endl;
+            Log(LogLevel::Error)<<"Error on read from port: "<<strerror(e);
         }
     }
 }
@@ -210,9 +211,11 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
     engine.load(url);
+    Log(LogLevel::Info)<<"Start application";
     SerialPort port{"/dev/ttyUSB2", 9600};
     if(port.open())
     {
+        Log(LogLevel::Info)<<"Port opened";
         //Phone phone(&port, &engine);
         //Phone phone(&port);
         //because c++ object can not linked with qml(or I do not how),
@@ -244,7 +247,7 @@ int main(int argc, char *argv[])
 
     }
     else
-        std::cout<<"Error on open port!"<<std::endl;
+        Log(LogLevel::Error)<<"Error on opening port";
 //TODO: for ui tests, remove later
     auto *dbClient=SqliteClient::instance();
     dbClient->connect();
