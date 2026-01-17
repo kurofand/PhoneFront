@@ -2,6 +2,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <chrono>
+#include <iomanip>
 
 static const std::unordered_map<LogLevel, std::string> levelMap=
 {
