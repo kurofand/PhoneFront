@@ -385,6 +385,10 @@ void Phone::parseResponse(std::string &str)
                 delete currentCall_;
                 currentCall_=nullptr;
             }
+            //stop audio
+            auto *player=Player::instance();
+            if(player->playing())
+                player->stop();
             break;
         }
 	};
