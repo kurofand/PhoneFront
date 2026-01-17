@@ -2,9 +2,9 @@
 #define PHONE_HPP
 
 #include "enums.hpp"
-#include "call.cpp"
-#include "SerialPort.cpp"
-#include "sms.cpp"
+#include "call.hpp"
+#include "SerialPort.hpp"
+#include "sms.hpp"
 #include <qqmlapplicationengine.h>
 
 class Phone

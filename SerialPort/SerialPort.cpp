@@ -4,6 +4,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstring>
+#include <utility>
+
+#include "Log/log.hpp"
 
 SerialPort::SerialPort(const char* port, unsigned speed)
 {
@@ -54,6 +57,7 @@ bool SerialPort::open()
 
 int SerialPort::writeToPort(const char* msg)
 {
+    Log(LogLevel::Debug)<<"Send request to the port: \""<<msg<<"\"";
 	return write(portDescriptor, msg, strlen(msg));
 }
 

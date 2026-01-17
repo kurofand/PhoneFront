@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include "sqliteclient.hpp"
+#include "Log/log.hpp"
 
 void SqliteClient::connect(const char* fileName)
 {
@@ -30,11 +31,11 @@ void SqliteClient::connect(bool createDB)
     rc=sqlite3_open("db/phone.db", &db);
 	if(rc)
 	{
-		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        Log(LogLevel::Error)<<"Error on open database: "<<sqlite3_errmsg(db);
 		return;
 	}
 	else
-		fprintf(stderr, "Opened db successfully\n");
+        Log(LogLevel::Debug)<<"Opened db successfully";
 	this->connected=true;
     if(createDB)
     {
@@ -49,6 +50,7 @@ void SqliteClient::executeQuery(const char *query, std::vector<std::unordered_ma
 	if(!connected)
 		return;
 
+    Log(LogLevel::Debug)<<"Executing query \""<<query<<"\"";
 	uint8_t i=0;
 	std::string queryType="";
 	size_t querySize=strlen(query);

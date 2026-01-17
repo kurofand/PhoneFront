@@ -9,10 +9,17 @@ set(CMAKE_CXX_STANDARD 20)
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(SQLite3 REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 
 qt_add_executable(appPhoneFront
     main.cpp
     Log/log.cpp
+    qmlconnector.cpp
+    SerialPort/SerialPort.cpp
+    SerialPort/Phone.cpp
+    SerialPort/sms.cpp
+    SerialPort/call.cpp
+    sound/player.cpp
 )
 
 qt_add_qml_module(appPhoneFront
@@ -54,6 +61,7 @@ target_link_libraries(appPhoneFront
 )
 target_link_libraries(appPhoneFront PRIVATE Qt6::Core)
 target_link_libraries(appPhoneFront PRIVATE SQLite::SQLite3)
+target_link_libraries(appPhoneFront PRIVATE Qt6::Multimedia)
 
 include(GNUInstallDirs)
 install(TARGETS appPhoneFront

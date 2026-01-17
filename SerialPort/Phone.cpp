@@ -1,5 +1,6 @@
 #include "Phone.hpp"
 #include "maps.hpp"
+#include "../sound/player.hpp"
 #include "Log/log.hpp"
 
 #include <sstream>
@@ -245,6 +246,8 @@ void Phone::parseResponse(std::string &str)
                     auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
                     tIncomingNumber->setProperty("text", number->c_str());
                     QMetaObject::invokeMethod(dIncomingCall, "open");
+                    auto *player=Player::instance();
+                    player->ring();
                 }
 
                 std::string nBody="\"Incoming call from "+*number+"\"";
@@ -289,6 +292,9 @@ void Phone::parseResponse(std::string &str)
                     dCall->setProperty("connected", true);
                     dCall->setProperty("runTimer", true);
                 }
+                auto *player=Player::instance();
+                if(player->playing())
+                    player->stop();
             }
             break;
         }
