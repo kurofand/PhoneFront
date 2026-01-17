@@ -20,11 +20,17 @@ bool SerialPort::open()
 //NONBLOCK cases "Resource temporarily unavailable" or read()
 //	if((portDescriptor=::open(port, O_RDWR|O_NOCTTY|O_NONBLOCK))<0)
 	if((portDescriptor=::open(port, O_RDWR|O_NOCTTY|O_SYNC))<0)
+    {
+        Log(LogLevel::Error)<<"Error on open port descriptor";
 		return false;
+    }
 
 	struct termios tty;
 	if(tcgetattr(portDescriptor, &tty)!=0)
+    {
+        Log(LogLevel::Error)<<"Error on get port attributes";
 		return false;
+    }
 
 	cfsetospeed(&tty, speed);
 	cfsetispeed(&tty, speed);
@@ -48,7 +54,10 @@ bool SerialPort::open()
 
 //TODO: add error handling
 	if(tcsetattr(portDescriptor, TCSANOW, &tty)!=0)
+    {
+        Log(LogLevel::Error)<<"Error on set port attributes";
 		return false;
+    }
 
 //	readFromPort(nullptr, 100);
 

@@ -75,6 +75,8 @@ int main(int argc, char *argv[])
         phone->requestConnectionStatus();
         sleep(1);
         phone->requestOperatorInfo();
+        sleep(1);
+        phone->setIdentification();
         auto *dbClient=SqliteClient::instance();
         dbClient->connect();
         auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();

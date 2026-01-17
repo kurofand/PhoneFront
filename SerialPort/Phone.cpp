@@ -84,6 +84,12 @@ void Phone::sendSms(Sms *sms)
     delete sms;
 }
 
+void Phone::setIdentification()
+{
+    std::string command("AT+CLIP=1\r\n");
+    port_->writeToPort(command.c_str());
+}
+
 //TODO: maybe add AT+CPAS command to get current call status
 
 void Phone::parseResponse(std::string &str)
@@ -198,10 +204,13 @@ void Phone::parseResponse(std::string &str)
         //not best decision but for now ignore command if there is call with number info
         //received pattern: create call on RING, get number from first CLCC, then ignore
         //dialed pattern: create call on ATD, set number on ATD, ignore all CLCC
+
+        //after some changes in Linux environment settings to run w/o root
+        //CLCC is automatically called no more
 		case ATResponse::CLCC:
 		{
             Log(LogLevel::Debug)<<"CLCC signal/response";
-            if(currentCall_&&currentCall_->number()->empty())
+            /*if(currentCall_&&currentCall_->number()->empty())
             {
                 std::string s;
                 std::stringstream ss(responseStr);
@@ -253,12 +262,41 @@ void Phone::parseResponse(std::string &str)
                 std::string nBody="\"Incoming call from "+*number+"\"";
                 sendNotification(&nBody);
 
-            }
+            }*/
 
 			break;
 		}
+
+        //instead of CLCC response using CLIP response to get a number
+        //same logic - read number from first response and ignore all after
+        //important note: AT+CLIP=1 must be executed to get CLIP on RING
 		case ATResponse::CLIP:
 		{
+            Log(LogLevel::Debug)<<"CLIP response";
+            if(currentCall_&&currentCall_->number()->empty())
+            {
+                Log(LogLevel::Debug)<<"Parsing number";
+                removeNewLine(&responseStr);
+                currentCall_->number(responseStr);
+                std::string *number;
+                if(contacts_->find(*currentCall_->number())!=contacts_->end())
+                    *number=contacts_->at(*currentCall_->number())+"("+*currentCall_->number()+")";
+                else
+                    number=currentCall_->number();
+                Log(LogLevel::Debug)<<"OK";
+                auto *dIncomingCall=findQMLObj("dIncomingCall");
+                if(dIncomingCall)
+                {
+                    auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
+                    tIncomingNumber->setProperty("text", number->c_str());
+                    QMetaObject::invokeMethod(dIncomingCall, "open");
+                    auto *player=Player::instance();
+                    player->ring();
+                }
+
+                std::string nBody="\"Incoming call from "+*number+"\"";
+                sendNotification(&nBody);
+            }
 			break;
 		}
         //TODO: add to end call cases feature to save call history

@@ -20,6 +20,7 @@ class Phone
 		void requestSignalStrength();
         void setVoiceHangupControl();
         void readAndDeleteMessage(const char* mesId);
+        void setIdentification();
 		void parseResponse(std::string &str);
 		void answer();
 		void disconnect();

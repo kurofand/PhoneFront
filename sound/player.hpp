@@ -12,7 +12,7 @@ class Player
         static Player* instance();
         void ring();
         void stop();
-        const bool playing(){return player->isPlaying();};
+        const bool playing(){return player->playbackState()==QMediaPlayer::PlayingState;};
 
         ~Player();
 
