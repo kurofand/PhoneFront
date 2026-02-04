@@ -4,6 +4,7 @@
 
 #include "SerialPort/Phone.hpp"
 #include "sqliteconnector/sqliteclient.hpp"
+#include "Log/log.hpp"
 
 void QMLConnector::answer()
 {
@@ -126,21 +127,27 @@ void QMLConnector::editContact(int id, QString name)
 
 void QMLConnector::getList(const char* query, const char* qmlFunc)
 {
+    Log(LogLevel::Debug)<<"Getting db instance...";
     auto *db=SqliteClient::instance();
     auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();
+    Log(LogLevel::Debug)<<"Executing query";
     db->executeQuery(query, queryRes);
+    Log(LogLevel::Debug)<<"Query executed";
     if(!queryRes->empty())
     {
         auto *root=window();
+        Log(LogLevel::Debug)<<"Inserting query result to variant map...";
         for(const auto &row: *queryRes)
         {
             QVariantMap e;
             for(const auto &[key, val]: row)
                 e.insert(QString::fromStdString(key), QString::fromStdString(val));
-            if(row.find("number")!=row.end()&&Phone::getInstance()->contacts()!=nullptr)
+            Log(LogLevel::Debug)<<"Checking contacts for name";
+            if(row.find("number")!=row.end()&&Phone::getInstance()->contacts()!=nullptr&&!Phone::getInstance()->contacts()->empty())
                 e.insert("name", QString::fromStdString(Phone::getInstance()->contacts()->at(row.at("number"))));
             QMetaObject::invokeMethod(root, qmlFunc, Q_ARG(QVariant, QVariant::fromValue(e)));
         }
+        Log(LogLevel::Debug)<<"Complete";
     }
     delete queryRes;
 }
