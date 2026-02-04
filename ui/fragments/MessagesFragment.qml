@@ -11,6 +11,13 @@ ColumnLayout
 	height: parent.height
 	spacing: 10
 	FragmentHeader{text: "Message history"}
+	Text
+	{
+		leftPadding: 10
+		visible: mainModel.count===0
+		color: "white"
+		text: "Message box is empty"
+	}
 	ListView
 	{
 		id: list
@@ -44,12 +51,13 @@ ColumnLayout
 	{
 		id: tMessage
 		leftPadding: 10
-		text: mainModel.get(0).msg
+		text: mainModel.count>0?mainModel.get(0).msg:""
 	}
 	Row
 	{
 		Layout.alignment: Qt.AlignHCenter
 		spacing: 10
+		visible: mainModel.count>0
 		Button
 		{
 			onClicked:
