@@ -43,10 +43,12 @@ void Sms::parse()
         if(number_.ends_with('F'))
             number_.pop_back();
     }
+    Log(LogLevel::Debug)<<"Number: "<<number_;
 
     //skip TP-PID - protocol identifier
     currentPos+=2;
-    //skip TP-DCS - data coding scheme, believing it is UCS2
+    //TP-DCS - data coding scheme, 2 digits - "08" for UCS2 and "00" for 7bit encoding
+    bool isUcs=pdu_->substr(currentPos, 2)=="08";
     currentPos+=2;
 
     //get datetime, same as sender number octets are reversed, format is yy mm dd HH MM SS
@@ -69,20 +71,46 @@ void Sms::parse()
         datetime_=day+"/"+mon+"/"+year+" "+hour+":"+min+":"+sec;
 
     }
+    Log(LogLevel::Debug)<<"Datetime: "<<datetime_;
 
     //skip TP-UDL - length of data. for basic sms data will be from current point to the end of the message
     currentPos+=2;
 
-    //data in 4 digit hexes
-    for(;currentPos<pdu_->size();currentPos+=4)
+    if(isUcs)
+        //data in 4 digit hexes
+        for(;currentPos<pdu_->size();currentPos+=4)
+        {
+            int val;
+            strHexToDec(&val, currentPos, 4);
+            std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+            message_+=converter.to_bytes(val);
+        }
+    else
     {
-        std::stringstream ss;
-        ss<<std::hex<<pdu_->substr(currentPos, 4);
+        //data in 2 digit hex septets
+        uint8_t iteration=1;
+        std::string prevVal, currVal;
         int val;
-        ss>>val;
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-        message_+=converter.to_bytes(val);
+        strHexToDec(&val, currentPos);
+        prevVal=std::bitset<8>(val).to_string();
+        for(currentPos+=2;currentPos<=pdu_->size();currentPos+=2)
+        {
+            strHexToDec(&val, currentPos);
+            currVal=std::bitset<8>(val).to_string();
+            currVal.append(prevVal.substr(0, iteration));
+            prevVal.erase(0, iteration);
+            message_+=static_cast<char>(std::stoi(prevVal, nullptr, 2));
+            prevVal=currVal;
+            if(++iteration==7)
+            {
+                iteration=0;
+                std::string tail=prevVal.substr(7);
+                message_+=static_cast<char>(std::stoi(tail, nullptr, 2));
+                prevVal.resize(7);
+            }
+        }
     }
+    Log(LogLevel::Debug)<<"Message: "<<message_;
     received_=true;
     Log(LogLevel::Debug)<<"Pdu parsing complete";
 
@@ -190,9 +218,9 @@ void Sms::saveToDB()
 
 }
 
-void Sms::strHexToDec(size_t *p, size_t pos)
+void Sms::strHexToDec(auto *p, size_t pos, size_t size)
 {
     std::stringstream ss;
-    ss<<std::hex<<pdu_->substr(pos, 2);
+    ss<<std::hex<<pdu_->substr(pos, size);
     ss>>*p;
 }

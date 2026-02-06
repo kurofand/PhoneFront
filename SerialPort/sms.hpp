@@ -25,7 +25,7 @@ class Sms
         std::string datetime_;
         bool received_;
 
-        void strHexToDec(size_t *p, size_t pos);
+        void strHexToDec(auto *p, size_t pos, size_t size=2);
 };
 
 #endif // SMS_HPP
