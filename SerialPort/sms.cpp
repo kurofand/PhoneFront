@@ -17,8 +17,17 @@ void Sms::parse()
     size_t numLength=0;
     strHexToDec(&numLength, 0);
 
-    //skip sms center number and two next digit(First octet of this SMS-DELIVER message.)
-    size_t currentPos=2+numLength*2+2;
+    //skip sms center number
+    size_t currentPos=2+numLength*2;
+
+    //There can be header in UD, it can be determined by PDU type octets
+    bool udhPresent=false;
+    {
+        int pduType;
+        strHexToDec(&pduType, currentPos);
+        udhPresent=pduType&(1<<6);
+    }
+    currentPos+=2;
 
     strHexToDec(&numLength, currentPos);
     //in pdu format phone numbers are always even - if it is not there will be "F" in the tail
@@ -75,6 +84,14 @@ void Sms::parse()
 
     //skip TP-UDL - length of data. for basic sms data will be from current point to the end of the message
     currentPos+=2;
+
+    //skip header if present
+    if(udhPresent)
+    {
+        int headerLength;
+        strHexToDec(&headerLength, currentPos);
+        currentPos+=2+headerLength*2;
+    }
 
     if(isUcs)
         //data in 4 digit hexes

@@ -353,7 +353,7 @@ void Phone::parseResponse(std::string &str)
             std::string pduLine;
             //get second line(response body) from response
             while(getline(ss, pduLine, '\n'))
-                if(i++==1)
+                if(i++>0&&!pduLine.empty())
                     break;
             removeNewLine(&pduLine);
             Sms sms{&pduLine};
