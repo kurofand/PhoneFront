@@ -22,6 +22,7 @@ class Phone
         void readAndDeleteMessage(const char* mesId);
         void setIdentification();
 		void parseResponse(std::string &str);
+        void sendVoiceMenuVal(char &c);
 		void answer();
 		void disconnect();
 		void hangUp();
@@ -34,6 +35,7 @@ class Phone
 		SerialPort* port(){return port_;}
         //TODO: test this. maybe there are problems with status_ val
         bool connectionAlive(){return port_&&(status_==ConnectionStatus::REG||status_==ConnectionStatus::ROAMING)&&signalStrength_>0;}
+        bool onCall(){return currentCall_!=nullptr;}
         ~Phone(){};
 	private:
         QObject* findQMLObj(const char* objName);

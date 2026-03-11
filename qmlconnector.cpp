@@ -125,6 +125,13 @@ void QMLConnector::editContact(int id, QString name)
     getContacts();
 }
 
+void QMLConnector::sendVoiceMenu(char c)
+{
+    auto *phone=Phone::getInstance();
+    if(phone->onCall())
+        phone->sendVoiceMenuVal(c);
+}
+
 void QMLConnector::getList(const char* query, const char* qmlFunc)
 {
     Log(LogLevel::Debug)<<"Getting db instance...";

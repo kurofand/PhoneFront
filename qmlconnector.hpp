@@ -24,6 +24,7 @@ class QMLConnector: public QQuickItem
         Q_INVOKABLE void deleteSMS(QString id="");
         Q_INVOKABLE void addContact(QString name);
         Q_INVOKABLE void editContact(int id, QString name);
+        Q_INVOKABLE void sendVoiceMenu(char c);
 
     private:
         void getList(const char* query, const char* qmlFunc="appendToList");

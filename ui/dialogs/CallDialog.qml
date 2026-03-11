@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import "../components"
+
 Dialog
 {
 	x: (parent.width-width)/2
@@ -80,6 +82,55 @@ Dialog
 				min="00";
 				close();
 			}
+		}
+
+		RoundButton
+		{
+			implicitWidth: 140
+			implicitHeight: 30
+			radius: 50
+			Layout.alignment: Qt.AlignHCenter
+			visible: connected
+			background: Rectangle
+			{
+				radius: 50
+				color: "#333"
+			}
+			contentItem: Text
+			{
+				text: gVoiceMenuButtons.visible?"△":"▽"
+				horizontalAlignment: Text.AlignHCenter
+				verticalAlignment: Text.AlignVCenter
+				font.pointSize: 20
+			}
+			onClicked: gVoiceMenuButtons.visible=!gVoiceMenuButtons.visible
+		}
+
+		component VoiceMenuButton: DialFormButton
+		{
+			onClicked: connector.sendVoiceMenu(text)
+		}
+
+		Grid
+		{
+			id: gVoiceMenuButtons
+			Layout.alignment: Qt.AlignHCenter
+			rows: 4
+			columns: 3
+			spacing: 10
+			visible: false
+			VoiceMenuButton{text: "1"}
+			VoiceMenuButton{text: "2"}
+			VoiceMenuButton{text: "3"}
+			VoiceMenuButton{text: "4"}
+			VoiceMenuButton{text: "5"}
+			VoiceMenuButton{text: "6"}
+			VoiceMenuButton{text: "7"}
+			VoiceMenuButton{text: "8"}
+			VoiceMenuButton{text: "9"}
+			VoiceMenuButton{text: "*"}
+			VoiceMenuButton{text: "0"}
+			VoiceMenuButton{text: "#"}
 		}
 	}
 

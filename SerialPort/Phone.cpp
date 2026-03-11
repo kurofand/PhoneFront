@@ -90,6 +90,14 @@ void Phone::setIdentification()
     port_->writeToPort(command.c_str());
 }
 
+void Phone::sendVoiceMenuVal(char &c)
+{
+    std::string command("AT+VTS=");
+    command+=c;
+    command+="\r\n";
+    port_->writeToPort(command.c_str());
+}
+
 //TODO: maybe add AT+CPAS command to get current call status
 
 void Phone::parseResponse(std::string &str)
