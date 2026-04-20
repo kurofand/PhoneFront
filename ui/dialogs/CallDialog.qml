@@ -90,7 +90,8 @@ Dialog
 			implicitHeight: 30
 			radius: 50
 			Layout.alignment: Qt.AlignHCenter
-			visible: connected
+			//in some cases i got VOICE CALL: BEGIN only after AT+VTS so buttons should be visible all the time
+			//visible: connected
 			background: Rectangle
 			{
 				radius: 50

@@ -90,7 +90,7 @@ void Phone::setIdentification()
     port_->writeToPort(command.c_str());
 }
 
-void Phone::sendVoiceMenuVal(char &c)
+void Phone::sendVoiceMenuVal(char &&c)
 {
     std::string command("AT+VTS=");
     command+=c;

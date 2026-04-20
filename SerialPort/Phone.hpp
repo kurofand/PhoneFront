@@ -22,7 +22,7 @@ class Phone
         void readAndDeleteMessage(const char* mesId);
         void setIdentification();
 		void parseResponse(std::string &str);
-        void sendVoiceMenuVal(char &c);
+        void sendVoiceMenuVal(char &&c);
 		void answer();
 		void disconnect();
 		void hangUp();
