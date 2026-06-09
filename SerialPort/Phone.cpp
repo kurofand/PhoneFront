@@ -111,6 +111,10 @@ void Phone::parseResponse(std::string &str)
 	{
 //first 2 symbols are <\r><\n>
 		commandKey=str.substr(2, str.find(':')-2);
+//also sometimes I got mirroring the request command in response
+//ex.: AT+CREG? returns +CREG\r\n+CREG: [0,1]
+//it is probably a reading problem, but I have no idea how to fix it in reading side
+        commandKey=commandKey.substr(commandKey.rfind("+"));
 		responseStr=str.substr(str.find(':')+2);
 		responseStr=responseStr.substr(0, responseStr.find("<\r><\n>"));
 	}
