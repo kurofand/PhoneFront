@@ -15,7 +15,7 @@ ColumnLayout
 	{
 		leftPadding: 10
 		visible: mainModel.count===0
-		color: "white"
+		color: activeTheme.mainFont
 		text: "Message box is empty"
 	}
 	ListView
@@ -34,13 +34,13 @@ ColumnLayout
 			{
 				anchors.fill: parent
 				leftPadding: 5
-				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isReceived=="1"?"↓":"↑"}
-				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isRead=="1"?"R":"U"}
+				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isReceived=="1"?"↓":"↑"; color: activeTheme.subFont}
+				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isRead=="1"?"R":"U"; color: activeTheme.subFont}
 				Column
 				{
 					padding: 5
-					Text{text: datetime}
-					Text{text: number}
+					Text{text: datetime; color: activeTheme.subFont}
+					Text{text: number; color: activeTheme.subFont}
 				}
 			}
 		MouseArea{anchors.fill: parent;onClicked: {list.currentIndex=index; activeMessageIndex=index; tMessage.text=mainModel.get(activeMessageIndex).msg}}
@@ -52,6 +52,7 @@ ColumnLayout
 		id: tMessage
 		leftPadding: 10
 		text: mainModel.count>0?mainModel.get(0).msg:""
+		color: activeTheme.mainFont
 	}
 	Row
 	{
@@ -71,7 +72,9 @@ ColumnLayout
 			{
 				id: btChangeMark
 				text: mainModel.get(activeMessageIndex).isRead==="1"?"Mark as unread":"Mark as read"
+				color: activeTheme.mainFont
 			}
+			background: DefaultButtonBackground{}
 		}
 		Button
 		{
@@ -80,7 +83,9 @@ ColumnLayout
 			{
 				horizontalAlignment: Text.AlignHCenter
 				text: "Reply"
+				color: activeTheme.mainFont
 			}
+			background: DefaultButtonBackground{}
 		}
 		Button
 		{
@@ -89,7 +94,9 @@ ColumnLayout
 			{
 				horizontalAlignment: Text.AlignHCenter
 				text: "Delete"
+				color: activeTheme.mainFont
 			}
+			background: DefaultButtonBackground{}
 		}
 	}
 }

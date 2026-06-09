@@ -26,15 +26,15 @@ ColumnLayout
 			{
 				anchors.fill: parent
 				leftPadding: 5
-				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isReceived=="1"?"↓":"↑"}
+				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isReceived=="1"?"↓":"↑"; color: activeTheme.subFont}
 				Column
 				{
 					padding: 5
-					Text{text: datetime}
-					Text{text: typeof name!="undefined"&&name!=""?name:number}
+					Text{text: datetime; color: activeTheme.subFont}
+					Text{text: typeof name!="undefined"&&name!=""?name:number; color: activeTheme.subFont}
 				}
-				Text{anchors.top: parent.top;anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;leftPadding: 5;text: "Call length:"}
-				Text{anchors.top: parent.top;anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: length}
+				Text{anchors.top: parent.top;anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;leftPadding: 5;text: "Call length:"; color: activeTheme.subFont}
+				Text{anchors.top: parent.top;anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: length; color: activeTheme.subFont}
 			}
 		MouseArea{anchors.fill: parent;onClicked: list.currentIndex=index;
 			onPressAndHold:{callMenu.number=mainModel.get(index).number;callMenu.popup()}}

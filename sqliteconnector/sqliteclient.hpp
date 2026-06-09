@@ -47,7 +47,27 @@ class SqliteClient
                                            "contactsId INTEGER NOT NULL,"
                                            "number VARCHAR(20) NOT NULL);";
 
-        inline static const char* tablesToCreate[]={smsTableSQL, callsTableSQL, contactsTableSQL, savedNumbersTableSQL};
+        inline static const char* themesTableSQL="CREATE TABLE themes(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                            "name VARCHAR(50) NOT NULL,"
+                                            "mainBackground CHARACTER(6) NOT NULL,"
+                                            "btnBackground CHARACTER(6) NOT NULL,"
+                                            "mainFont CHARACTER(6) NOT NULL,"
+                                            "subFont CHARACTER(6) NOT NULL);";
+
+        inline static const char* settingsTableSQL="CREATE TABLE settings(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                                     "name VARCHAR(50) NOT NULL,"
+                                                     "val VARCHAR(100));";
+
+        inline static const char* tablesToCreate[]={smsTableSQL, callsTableSQL, contactsTableSQL, savedNumbersTableSQL, themesTableSQL, settingsTableSQL};
+
+        //fill db with default vals
+        inline static const char* fillThemesSQL="INSERT INTO themes(name, mainBackground, btnBackground, mainFont, subFont) VALUES"
+                                                  "(\"light\", \"F9F8F6\", \"E3E2E1\",\"000000\", \"000000\"),"
+                                                  "(\"dark\", \"222222\", \"333333\",\"FFFFFF\", \"FFFFFF\");";
+        inline static const char* fillSettingsSQL="INSERT INTO settings(name, val) VALUES"
+                                                    "(\"Theme\", 1),"
+                                                    "(\"Default ringtone\", \"\")";
+        inline static const char* queriesToExecute[]={fillThemesSQL, fillSettingsSQL};
 };
 
 #endif

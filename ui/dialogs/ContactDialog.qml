@@ -3,6 +3,8 @@ import QtQuick.Controls
 import Qt.labs.qmlmodels
 import QtQuick.Layouts
 
+import "../components"
+
 Dialog
 {
 	x: (parent.width-width)/2
@@ -13,7 +15,7 @@ Dialog
 	padding: 20
 	background: Rectangle
 	{
-		color:"#222222"
+		color: activeTheme.mainBackground
 	}
 
 	property string contactName: ""
@@ -27,11 +29,11 @@ Dialog
 		Row
 		{
 			spacing: 10
-			Text{text: "Name:"}
-			Text{text: contactName}
+			Text{text: "Name:"; color: activeTheme.mainFont}
+			Text{text: contactName; color: activeTheme.mainFont}
 		}
 
-		Text{text: "Numbers:"}
+		Text{text: "Numbers:"; color:activeTheme.mainFont}
 		//TODO: figure out where did separator go after changed Column to Layout
 		Rectangle{id: separator; width: parent.width-20; height: 1; Layout.alignment: Qt.AlignHCenter}
 		ListView
@@ -48,7 +50,7 @@ Dialog
 				Column
 				{
 					width: parent.width
-					Text{padding:10; text: number}
+					Text{padding:10; text: number; color: activeTheme.mainFont}
 					Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter}
 				}
 				MouseArea{anchors.fill: parent; onPressAndHold: {numberMenu.index=index; numberMenu.popup()}}
@@ -57,14 +59,16 @@ Dialog
 		Button
 		{
 			id: bAdd
-			width: 80
-			height: 50
+			implicitWidth: 80
+			implicitHeight: 50
 			Layout.alignment: Qt.AlignRight
 			contentItem: Text
 			{
 				text: "Add number"
+				color: activeTheme.mainFont
 			}
 			onClicked: dAddNumber.open()
+			background: DefaultButtonBackground{}
 		}
 	}
 
@@ -86,6 +90,7 @@ Dialog
 		{
 			id: teNumber
 			text: subModel.get(numberMenu.index).number
+			color: activeTheme.mainFont
 		}
 		onAccepted:
 		{
@@ -108,6 +113,7 @@ Dialog
 		Text
 		{
 			text: "Remove number?"
+			color: activeTheme.mainFont
 		}
 		onAccepted:
 		{
@@ -124,8 +130,8 @@ Dialog
 		{
 			anchors.fill: parent
 			spacing: 10
-			Text{text: "New number:"}
-			TextEdit{id: teNewNumber; Layout.fillWidth: true}
+			Text{text: "New number:"; color: activeTheme.mainFont}
+			TextEdit{id: teNewNumber; Layout.fillWidth: true; color: activeTheme.mainFont}
 		}
 		onAccepted:
 		{

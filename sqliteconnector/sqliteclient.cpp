@@ -41,6 +41,8 @@ void SqliteClient::connect(bool createDB)
     {
         for(unsigned i=0;i<(sizeof(tablesToCreate)/sizeof(char*));i++)
             executeQuery(tablesToCreate[i]);
+        for(unsigned i=0;i<(sizeof(queriesToExecute)/sizeof(char*));i++)
+            executeQuery(queriesToExecute[i]);
     }
 }
 

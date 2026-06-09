@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import "../components"
+
 Dialog
 {
 	property string name: ""
@@ -11,10 +13,10 @@ Dialog
 	width: 250
 	modal: true
 	padding: 20
-	onClosed: {id=0;name=""}
+	onClosed: {id=0;name="";tiName.text=""}
 	background: Rectangle
 	{
-		color: "#222222"
+		color: activeTheme.mainBackground
 	}
 
 	ColumnLayout
@@ -29,12 +31,14 @@ Dialog
 			Text
 			{
 				text: "Name:"
+				color: activeTheme.mainFont
 			}
 			TextInput
 			{
 				id: tiName
 				Layout.fillWidth: true
 				text: name
+				color: activeTheme.mainFont
 			}
 		}
 
@@ -55,7 +59,9 @@ Dialog
 			{
 				horizontalAlignment: Text.AlignHCenter
 				text: "Save"
+				color: activeTheme.mainFont
 			}
+			background: DefaultButtonBackground{}
 		}
 	}
 }

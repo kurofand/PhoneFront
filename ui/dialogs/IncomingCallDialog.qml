@@ -14,7 +14,7 @@ Dialog
 	closePolicy: Popup.CloseOnEscape
 	background: Rectangle
 	{
-		color: "#222222"
+		color: activeTheme.mainBackground
 	}
 
 
@@ -42,7 +42,7 @@ Dialog
 		{
 			Layout.alignment: Qt.AlignHCenter
 			font.pointSize: 20
-			color: "#FFF"
+			color: activeTheme.mainFont
 			text: "Incoming call"
 		}
 		Text
@@ -51,7 +51,7 @@ Dialog
 			objectName: "tIncomingNumber"
 			Layout.alignment: Qt.AlignHCenter
 			font.pointSize: 20
-			color: "#FFF"
+			color: activeTheme.mainFont
 			text: "080xxxx6256"
 		}
 

@@ -13,7 +13,7 @@ Dialog
 	closePolicy: Popup.CloseOnEscape
 	background: Rectangle
 	{
-		color: "#222222"
+		color: activeTheme.mainBackground
 	}
 
 	property string number: "080xxxxxx56"
@@ -35,6 +35,7 @@ Dialog
 				Layout.alignment: Qt.AlignHCenter
 				font.pointSize: 15
 				text: connected?"Connected":"Calling..."
+				color: activeTheme.mainFont
 			}
 			Text
 			{
@@ -42,6 +43,7 @@ Dialog
 				Layout.alignment: Qt.AlignHCenter
 				font.pointSize: 15
 				text: min+":"+sec
+				color: activeTheme.mainFont
 			}
 		}
 		Text
@@ -50,6 +52,7 @@ Dialog
 			Layout.alignment: Qt.AlignHCenter
 			font.pointSize: 20
 			text: number
+			color: activeTheme.mainFont
 		}
 		RoundButton
 		{

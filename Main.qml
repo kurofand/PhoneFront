@@ -14,7 +14,18 @@ ApplicationWindow
     width: 450
     height: 450
     visible: true
-    color: root.backgroundColor
+    //color: root.backgroundColor
+    color: activeTheme.mainBackground
+
+    QtObject
+    {
+        id: activeTheme
+        objectName: "activeTheme"
+        property color mainBackground
+        property color mainFont
+        property color subFont
+        property color btnBackground
+    }
 
     Item
     {
@@ -55,6 +66,7 @@ ApplicationWindow
                 width: 50
                 height: 50
                 onClicked: {lContainer.sourceComponent=cStatus}
+                background: DefaultButtonBackground{}
             }
 
             Button
@@ -62,6 +74,7 @@ ApplicationWindow
                 width: 50
                 height: 50
                 onClicked: {clearModel();connector.getCalls();lContainer.sourceComponent=cCalls;lContainer.width=window.width-cRightButtons.width}
+                background: DefaultButtonBackground{}
             }
 
             Button
@@ -69,18 +82,21 @@ ApplicationWindow
                 width: 50
                 height: 50
                 onClicked: {clearModel();connector.getMessages();lContainer.sourceComponent=cMessages;}
+                background: DefaultButtonBackground{}
             }
             Button
             {
                 width: 50
                 height: 50
                 onClicked: {clearModel();connector.getContacts();lContainer.sourceComponent=cContacts;}
+                background: DefaultButtonBackground{}
             }
             Button
             {
                 width: 50
                 height: 50
                 onClicked: {dSendMessage.open()}
+                background: DefaultButtonBackground{}
             }
 
             CallButton{width: 50; height: 50; text: "📞"; onClicked: dDial.open()}

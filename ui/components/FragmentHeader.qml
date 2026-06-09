@@ -5,6 +5,6 @@ Text
 	leftPadding: 5
 	topPadding: 5
 	bottomPadding: 10
-	color: "white"
+	color: activeTheme.mainFont
 	font.pointSize: 14
 }

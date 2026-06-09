@@ -21,6 +21,7 @@ Dialog
 		number=""
 	}
 	onOpened: tiNumber.text=number
+	background: Rectangle{color: activeTheme.mainBackground}
 
 	ColumnLayout
 	{
@@ -37,6 +38,7 @@ Dialog
 			{
 				id: tNumber
 				text:"To:"
+				color: activeTheme.mainFont
 			}
 			TextInput
 			{
@@ -44,11 +46,13 @@ Dialog
 				text: number
 				maximumLength: 20
 				Layout.fillWidth: true
+				color: activeTheme.mainFont
 			}
 		}
 		Text
 		{
 			text: "Message:"
+			color: activeTheme.mainFont
 		}
 		TextEdit
 		{
@@ -56,6 +60,7 @@ Dialog
 			Layout.fillWidth: true
 			Layout.fillHeight: true
 			wrapMode: TextEdit.Wrap
+			color: activeTheme.mainFont
 			//limit message length to 255. if not ui goes wild
 			//Alarm! max message length for PDU UCS2 is 140 bytes or 70 symbols, so
 			//TODO: set max message length to 70 or split message to several on send event
@@ -68,16 +73,18 @@ Dialog
 		Button
 		{
 			id: bSend
-			width: 100
-			height: 75
+			implicitWidth: 75
+			implicitHeight: 40
 			Layout.alignment: Qt.AlignHCenter
 			contentItem: Text
 			{
 				horizontalAlignment: Text.AlignHCenter
 				verticalAlignment: Text.AlignVCenter
 				text: "send"
+				color: activeTheme.mainFont
 			}
 			onClicked: connector.sendSMS(tiNumber.text, teMessage.text)
+			background: DefaultButtonBackground{}
 		}
 	}
 }

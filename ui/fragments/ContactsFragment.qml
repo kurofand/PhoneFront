@@ -25,7 +25,7 @@ ColumnLayout
 			{
 				width: parent.width
 				//Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter}
-				Text{padding:10; text: name}
+				Text{padding:10; text: name; color: activeTheme.subFont}
 				Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter}
 			}
 			MouseArea
@@ -44,13 +44,17 @@ ColumnLayout
 	}
 	Button
 	{
+		implicitWidth: 75
+		implicitHeight: 30
 		Layout.alignment: Qt.AlignRight
 		onClicked: {dAddEditContact.open()}
 		contentItem: Text
 		{
 			horizontalAlignment: Text.AlignHCenter
 			text: "Add"
+			color: activeTheme.mainFont
 		}
+		background: DefaultButtonBackground{}
 	}
 
 

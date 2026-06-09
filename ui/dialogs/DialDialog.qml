@@ -14,7 +14,7 @@ Dialog
 	onClosed: tNumber.text=" "
 	background: Rectangle
 	{
-		color: "#222222"
+		color: activeTheme.mainBackground
 	}
 
 	function addNumber(text)
@@ -43,7 +43,7 @@ Dialog
 			{
 				id: tNumber
 				Layout.fillWidth: true
-				color: "#FFF"
+				color: activeTheme.mainFont
 				text: qsTr("")
 			}
 			Button
@@ -60,6 +60,7 @@ Dialog
 					verticalAlignment: Text.AlignVCenter
 					text:"⌫"
 				}
+				background: DefaultButtonBackground{}
 			}
 		}
 		Grid

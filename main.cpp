@@ -91,8 +91,19 @@ int main(int argc, char *argv[])
     else
         Log(LogLevel::Error)<<"Error on opening port";
 //TODO: for ui tests, remove later
-    /*auto *dbClient=SqliteClient::instance();
-    dbClient->connect();*/
+    auto *dbClient=SqliteClient::instance();
+    dbClient->connect();
+    auto *window=engine.rootObjects().first();
+    auto *themeObj=window->findChild<QObject*>("activeTheme");
+    auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();
+    dbClient->executeQuery("SELECT mainBackground, btnBackground, mainFont, subFont FROM themes INNER JOIN settings ON settings.val=themes.id WHERE settings.name=\"Theme\"", queryRes);
+    for(auto const& [key, val]: queryRes->at(0))
+    {
+        std::string colorCode="#"+val;
+        themeObj->setProperty(key.c_str(), colorCode.c_str());
+    }
+    delete queryRes;
+
 
     return app.exec();
 }

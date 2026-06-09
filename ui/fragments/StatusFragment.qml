@@ -44,6 +44,7 @@ ColumnLayout
 				font.pointSize: 15
 				text: "⟳"
 			}
+			background: Rectangle{color: parent.down? Qt.darker(activeTheme.btnBackground, 1.1):activeTheme.btnBackground}
 		}
 	}
 }
