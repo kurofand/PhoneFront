@@ -25,8 +25,8 @@ ColumnLayout
 			{
 				width: parent.width
 				//Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter}
-				Text{padding:10; text: name; color: activeTheme.subFont}
-				Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter}
+				Text{padding:10; text: name; color: activeTheme.mainFont}
+				Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter; color: activeTheme.separatorColor}
 			}
 			MouseArea
 			{
@@ -51,6 +51,7 @@ ColumnLayout
 		contentItem: Text
 		{
 			horizontalAlignment: Text.AlignHCenter
+			verticalAlignment: Text.AlignVCenter
 			text: "Add"
 			color: activeTheme.mainFont
 		}

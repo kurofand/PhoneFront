@@ -35,7 +35,7 @@ Dialog
 
 		Text{text: "Numbers:"; color:activeTheme.mainFont}
 		//TODO: figure out where did separator go after changed Column to Layout
-		Rectangle{id: separator; width: parent.width-20; height: 1; Layout.alignment: Qt.AlignHCenter}
+		Rectangle{id: separator; width: parent.width-20; height: 1; Layout.alignment: Qt.AlignHCenter; color: activeTheme.separatorColor}
 		ListView
 		{
 			id: lNumbers
@@ -51,7 +51,7 @@ Dialog
 				{
 					width: parent.width
 					Text{padding:10; text: number; color: activeTheme.mainFont}
-					Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter}
+					Rectangle{width: parent.width-20; height: 1; anchors.horizontalCenter: parent.horizontalCenter; color: activeTheme.separatorColor}
 				}
 				MouseArea{anchors.fill: parent; onPressAndHold: {numberMenu.index=index; numberMenu.popup()}}
 			}

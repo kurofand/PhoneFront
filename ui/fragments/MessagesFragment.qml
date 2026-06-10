@@ -34,19 +34,19 @@ ColumnLayout
 			{
 				anchors.fill: parent
 				leftPadding: 5
-				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isReceived=="1"?"↓":"↑"; color: activeTheme.subFont}
-				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isRead=="1"?"R":"U"; color: activeTheme.subFont}
+				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isReceived=="1"?"↓":"↑"; color: list.currentIndex==index?activeTheme.subFont:activeTheme.mainFont}
+				Text{anchors.top: parent.top; anchors.bottom: parent.bottom;verticalAlignment: Text.AlignVCenter;text: isRead=="1"?"R":"U"; color: list.currentIndex==index?activeTheme.subFont:activeTheme.mainFont}
 				Column
 				{
 					padding: 5
-					Text{text: datetime; color: activeTheme.subFont}
-					Text{text: number; color: activeTheme.subFont}
+					Text{text: datetime; color: list.currentIndex==index?activeTheme.subFont:activeTheme.mainFont}
+					Text{text: number; color: list.currentIndex==index?activeTheme.subFont:activeTheme.mainFont}
 				}
 			}
 		MouseArea{anchors.fill: parent;onClicked: {list.currentIndex=index; activeMessageIndex=index; tMessage.text=mainModel.get(activeMessageIndex).msg}}
 		}
 	}
-	Rectangle{width: parent.width; height: 1}
+	Rectangle{width: parent.width; height: 1; color: activeTheme.separatorColor}
 	Text
 	{
 		id: tMessage

@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     auto *window=engine.rootObjects().first();
     auto *themeObj=window->findChild<QObject*>("activeTheme");
     auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();
-    dbClient->executeQuery("SELECT mainBackground, btnBackground, mainFont, subFont FROM themes INNER JOIN settings ON settings.val=themes.id WHERE settings.name=\"Theme\"", queryRes);
+    dbClient->executeQuery("SELECT mainBackground, btnBackground, mainFont, subFont, separatorColor FROM themes INNER JOIN settings ON settings.val=themes.id WHERE settings.name=\"Theme\"", queryRes);
     for(auto const& [key, val]: queryRes->at(0))
     {
         std::string colorCode="#"+val;

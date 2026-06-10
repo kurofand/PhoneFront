@@ -25,6 +25,7 @@ ApplicationWindow
         property color mainFont
         property color subFont
         property color btnBackground
+        property color separatorColor
     }
 
     Item
@@ -37,7 +38,6 @@ ApplicationWindow
         anchors.rightMargin: parent.SafeArea.margins.right
         anchors.bottomMargin: parent.SafeArea.margins.bottom
 
-        readonly property color backgroundColor: "#222222"
         property bool updatingConnectionStatus: false
         property bool updatingSignalStrength: false
     }
@@ -50,7 +50,7 @@ ApplicationWindow
         {
             id: lContainer
             width: window.width-cRightButtons.width
-            height: parent.height
+            height: window.height
             Layout.alignment: Qt.AlignLeft|Qt.AlignTop
             sourceComponent: cStatus
         }
