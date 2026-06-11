@@ -62,7 +62,7 @@ class SqliteClient
         inline static const char* tablesToCreate[]={smsTableSQL, callsTableSQL, contactsTableSQL, savedNumbersTableSQL, themesTableSQL, settingsTableSQL};
 
         //fill db with default vals
-        inline static const char* fillThemesSQL="INSERT INTO themes(name, mainBackground, btnBackground, mainFont, subFont) VALUES"
+        inline static const char* fillThemesSQL="INSERT INTO themes(name, mainBackground, btnBackground, mainFont, subFont, separatorColor) VALUES"
                                                   "(\"light\", \"F9F8F6\", \"E3E2E1\",\"000000\", \"FFFFFF\", \"000000\"),"
                                                   "(\"dark\", \"222222\", \"333333\",\"FFFFFF\", \"000000\", \"FFFFFF\");";
         inline static const char* fillSettingsSQL="INSERT INTO settings(name, val) VALUES"
