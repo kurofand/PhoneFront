@@ -19,8 +19,28 @@ void listen(Phone *phone)
         int read=phone->port()->readFromPort(buf, bufSize);
         if(read>0)
         {
-            std::string resp(buf, read);
-            phone->parseResponse(resp);
+/*            std::string resp(buf, read);
+            phone->parseResponse(resp);*/
+            //std::string chunk(buf, read);
+            std::string chunk(std::string(buf, read)), resp, line;
+            Log(LogLevel::Debug)<<"Chunk of data from modem: ["<<chunk<<"]";
+            std::stringstream sChunk(chunk);
+            while(getline(sChunk, line, '\n'))
+            {
+                if(line[0]=='+'||
+                    line.find("RING")!=std::string::npos||
+                    line.find("VOICE CALL")!=std::string::npos||
+                    line.find("MISSED_CALL")!=std::string::npos)
+                {
+                    resp+=line;
+                    //if(line.find("CMGRD")!=std::string::npos)
+                    phone->parseResponse(resp);
+                    resp="";
+                }
+
+            }
+            //potentional bug with cut response on response larger than buf size.
+            //let's hope that will not occure
             memset(buf, 0, bufSize);
         }
         else if(read<0)
@@ -67,15 +87,15 @@ int main(int argc, char *argv[])
         std::thread tListen(listen, phone);
         tListen.detach();
         phone->setVoiceHangupControl();
-        sleep(1);
+        //sleep(1);
         phone->requestNumber();
-        sleep(1);
+        //sleep(1);
         phone->requestSignalStrength();
-        sleep(1);
+        //sleep(1);
         phone->requestConnectionStatus();
-        sleep(1);
+        //sleep(1);
         phone->requestOperatorInfo();
-        sleep(1);
+        //sleep(1);
         phone->setIdentification();
         auto *dbClient=SqliteClient::instance();
         dbClient->connect();

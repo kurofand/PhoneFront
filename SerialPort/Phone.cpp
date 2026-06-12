@@ -107,16 +107,17 @@ void Phone::parseResponse(std::string &str)
 	std::string responseStr;
 //most common requests return value like "command: response"
 //but there are also non requested commands like "RING"
-	if(str.find(':')!=std::string::npos)
+    auto delimiter=str.find(':');
+    if(delimiter!=std::string::npos)
 	{
 //first 2 symbols are <\r><\n>
-		commandKey=str.substr(2, str.find(':')-2);
+        commandKey=str.substr(0, delimiter);
 //also sometimes I got mirroring the request command in response
 //ex.: AT+CREG? returns +CREG\r\n+CREG: [0,1]
 //it is probably a reading problem, but I have no idea how to fix it in reading side
         commandKey=commandKey.substr(commandKey.rfind("+"));
-		responseStr=str.substr(str.find(':')+2);
-		responseStr=responseStr.substr(0, responseStr.find("<\r><\n>"));
+        responseStr=str.substr(delimiter+2);
+        //responseStr=responseStr.substr(0, responseStr.find("<\r><\n>"));
 	}
 	else
     {
@@ -185,8 +186,8 @@ void Phone::parseResponse(std::string &str)
 		{
             Log(LogLevel::Debug)<<"Response to CREG request...";
             //erase OK\r\n
-            removeNewLine(&responseStr);
-            responseStr.erase(responseStr.end()-2, responseStr.end());
+            //removeNewLine(&responseStr);
+            //responseStr.erase(responseStr.end()-2, responseStr.end());
 //usual response something like " 0,0", space at the beginning cutted above
 //so if size differs from 3 something went wrong
 //TODO: handle cases when size differs from 3
