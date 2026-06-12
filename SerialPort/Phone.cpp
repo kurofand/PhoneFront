@@ -110,14 +110,12 @@ void Phone::parseResponse(std::string &str)
     auto delimiter=str.find(':');
     if(delimiter!=std::string::npos)
 	{
-//first 2 symbols are <\r><\n>
         commandKey=str.substr(0, delimiter);
 //also sometimes I got mirroring the request command in response
 //ex.: AT+CREG? returns +CREG\r\n+CREG: [0,1]
 //it is probably a reading problem, but I have no idea how to fix it in reading side
         commandKey=commandKey.substr(commandKey.rfind("+"));
         responseStr=str.substr(delimiter+2);
-        //responseStr=responseStr.substr(0, responseStr.find("<\r><\n>"));
 	}
 	else
     {
@@ -361,14 +359,13 @@ void Phone::parseResponse(std::string &str)
         case ATResponse::CMGRD:
         {
             Log(LogLevel::Debug)<<"CMGRD signal";
-            uint8_t i=0;
-            std::stringstream ss(responseStr);
-            std::string pduLine;
-            //get second line(response body) from response
-            while(getline(ss, pduLine, '\n'))
-                if(i++>0&&!pduLine.empty())
-                    break;
-            removeNewLine(&pduLine);
+            auto newLine=responseStr.find('\n');
+            if(newLine==std::string::npos)
+            {
+                Log(LogLevel::Error)<<"Response does not have a new line char, so pdu line is probably missing. Response: ["<<responseStr<<"]";
+                break;
+            }
+            std::string pduLine(responseStr.substr(newLine+1));
             Sms sms{&pduLine};
             sms.parse();
             std::string *number;
@@ -402,6 +399,11 @@ void Phone::parseResponse(std::string &str)
             auto *player=Player::instance();
             if(player->playing())
                 player->stop();
+            break;
+        }
+        default:
+        {
+            Log(LogLevel::Debug)<<"Command without parsing rules, skipping...";
             break;
         }
 	};

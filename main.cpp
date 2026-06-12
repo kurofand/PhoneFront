@@ -19,28 +19,40 @@ void listen(Phone *phone)
         int read=phone->port()->readFromPort(buf, bufSize);
         if(read>0)
         {
-/*            std::string resp(buf, read);
-            phone->parseResponse(resp);*/
-            //std::string chunk(buf, read);
+            //new read logic:
+            //get chunk of data
+            //split it by new line
+            //send to parser
             std::string chunk(std::string(buf, read)), resp, line;
             Log(LogLevel::Debug)<<"Chunk of data from modem: ["<<chunk<<"]";
             std::stringstream sChunk(chunk);
+            bool readNextLine=false;
             while(getline(sChunk, line, '\n'))
             {
+                //most responses start with + and contain only a single line
                 if(line[0]=='+'||
                     line.find("RING")!=std::string::npos||
                     line.find("VOICE CALL")!=std::string::npos||
-                    line.find("MISSED_CALL")!=std::string::npos)
+                    line.find("MISSED_CALL")!=std::string::npos||
+                    (readNextLine&&!line.empty()))
                 {
                     resp+=line;
-                    //if(line.find("CMGRD")!=std::string::npos)
+                    //CMGRD is the only exception for now - it has information in first line and pdu in second
+                    //so parser should receive both lines
+                    if(line.find("CMGRD")!=std::string::npos)
+                    {
+                        readNextLine=true;
+                        resp.push_back('\n');
+                        continue;
+                    }
                     phone->parseResponse(resp);
                     resp="";
+                    readNextLine=false;
                 }
 
             }
             //potentional bug with cut response on response larger than buf size.
-            //let's hope that will not occure
+            //let's hope that does not happen
             memset(buf, 0, bufSize);
         }
         else if(read<0)
@@ -87,15 +99,10 @@ int main(int argc, char *argv[])
         std::thread tListen(listen, phone);
         tListen.detach();
         phone->setVoiceHangupControl();
-        //sleep(1);
         phone->requestNumber();
-        //sleep(1);
         phone->requestSignalStrength();
-        //sleep(1);
         phone->requestConnectionStatus();
-        //sleep(1);
         phone->requestOperatorInfo();
-        //sleep(1);
         phone->setIdentification();
         auto *dbClient=SqliteClient::instance();
         dbClient->connect();
@@ -104,6 +111,16 @@ int main(int argc, char *argv[])
         dbClient->executeQuery("SELECT number, name FROM savedNumbers INNER JOIN contacts ON contactsId=contacts.id", queryRes);
         for(const auto &row: *queryRes)
             contacts->insert(std::pair<std::string, std::string>{row.at("number"), row.at("name")});
+
+        queryRes->clear();
+        auto *window=engine.rootObjects().first();
+        auto *themeObj=window->findChild<QObject*>("activeTheme");
+        dbClient->executeQuery("SELECT mainBackground, btnBackground, mainFont, subFont, separatorColor FROM themes INNER JOIN settings ON settings.val=themes.id WHERE settings.name=\"Theme\"", queryRes);
+        for(auto const& [key, val]: queryRes->at(0))
+        {
+            std::string colorCode="#"+val;
+            themeObj->setProperty(key.c_str(), colorCode.c_str());
+        }
         delete queryRes;
         phone->contacts(contacts);
 
@@ -111,18 +128,6 @@ int main(int argc, char *argv[])
     else
         Log(LogLevel::Error)<<"Error on opening port";
 //TODO: for ui tests, remove later
-    auto *dbClient=SqliteClient::instance();
-    dbClient->connect();
-    auto *window=engine.rootObjects().first();
-    auto *themeObj=window->findChild<QObject*>("activeTheme");
-    auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();
-    dbClient->executeQuery("SELECT mainBackground, btnBackground, mainFont, subFont, separatorColor FROM themes INNER JOIN settings ON settings.val=themes.id WHERE settings.name=\"Theme\"", queryRes);
-    for(auto const& [key, val]: queryRes->at(0))
-    {
-        std::string colorCode="#"+val;
-        themeObj->setProperty(key.c_str(), colorCode.c_str());
-    }
-    delete queryRes;
 
 
     return app.exec();
