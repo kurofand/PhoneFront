@@ -10,6 +10,8 @@
 #include "sqliteconnector/sqliteclient.cpp"
 #include "Log/log.hpp"
 
+#include "cli/cli.hpp"
+
 void listen(Phone *phone)
 {
     const size_t bufSize=1024;
@@ -129,7 +131,8 @@ int main(int argc, char *argv[])
         Log(LogLevel::Error)<<"Error on opening port";
 //TODO: for ui tests, remove later
 
-
+    Cli cli(&s);
+    cli.getNumInfo();
     return app.exec();
 }
 

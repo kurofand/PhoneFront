@@ -11,6 +11,9 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(SQLite3 REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 
+include(FindPkgConfig)
+pkg_check_modules(CURLPP REQUIRED curlpp)
+
 qt_add_executable(appPhoneFront
     main.cpp
     Log/log.cpp
@@ -20,6 +23,7 @@ qt_add_executable(appPhoneFront
     SerialPort/sms.cpp
     SerialPort/call.cpp
     sound/player.cpp
+    cli/cli.cpp
 )
 
 qt_add_qml_module(appPhoneFront
@@ -59,6 +63,7 @@ set_target_properties(appPhoneFront PROPERTIES
 
 target_link_libraries(appPhoneFront
     PRIVATE Qt6::Quick
+    ${CURLPP_LDFLAGS}
 )
 target_link_libraries(appPhoneFront PRIVATE Qt6::Core)
 target_link_libraries(appPhoneFront PRIVATE SQLite::SQLite3)
