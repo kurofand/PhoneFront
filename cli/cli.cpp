@@ -4,9 +4,12 @@
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
+#include <curlpp/Infos.hpp>
 
 #include <list>
 #include <sstream>
+#include <locale>
+#include <codecvt>
 
 bool Cli::getNumInfo()
 {
@@ -20,10 +23,14 @@ bool Cli::getNumInfo()
         curlpp::Easy request;
         request.setOpt(curlpp::options::Url(url));
         request.setOpt(curlpp::options::HttpHeader(headers));
+        request.setOpt(curlpp::options::WriteStream(&ss));
         request.perform();
-        ss<<request;
-
-        //std::cout<<ss.str()<<std::endl;
+        auto responseCode=curlpp::infos::ResponseCode::get(request);
+        if(responseCode!=200)
+        {
+            Log(LogLevel::Error)<<"Response code 200 expected, "<<responseCode<<" received";
+            return false;
+        }
     }
     catch(const std::exception &e)
     {
@@ -51,7 +58,6 @@ bool Cli::getNumInfo()
     if(!node)
     {
         Log(LogLevel::Error)<<"Failed to get node element: div, id: result-main-right";
-        xmlFree(node);
         xmlFreeDoc(doc);
         xmlCleanupParser();
         return false;
@@ -66,13 +72,13 @@ bool Cli::getNumInfo()
         return false;
     }
 
+    std::string s;
     try
     {
         node=node->children->next->next->next;
         auto *content=xmlNodeGetContent(node);
-        std::string name{reinterpret_cast<char*>(content)};
+        s=reinterpret_cast<char*>(content);
         xmlFree(content);
-        std::cout<<name<<std::endl;
     }
     catch(const std::exception &e)
     {
@@ -81,9 +87,20 @@ bool Cli::getNumInfo()
         xmlCleanupParser();
         return false;
     }
+    if(!s.empty())
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        std::wstring ws=converter.from_bytes(s);
+        auto pos=ws.find(L"：");
+        if(pos!=std::wstring::npos)
+            name_=converter.to_bytes(ws.substr(pos+1));
+    }
 
     xmlFreeDoc(doc);
     xmlCleanupParser();
+
+    if(name_.empty()||name_=="未登録")
+        name_="Not registered";
 
     return true;
 }

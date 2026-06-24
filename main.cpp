@@ -5,6 +5,8 @@
 
 #include <thread>
 
+#include <fstream>
+
 #include "qmlconnector.hpp"
 #include "SerialPort/Phone.hpp"
 #include "sqliteconnector/sqliteclient.cpp"
@@ -130,9 +132,22 @@ int main(int argc, char *argv[])
     else
         Log(LogLevel::Error)<<"Error on opening port";
 //TODO: for ui tests, remove later
-
-    Cli cli(&s);
-    cli.getNumInfo();
+    std::vector<std::string> s;
+    std::fstream f;
+    f.open("PhoneFront/testNumbers.txt");
+    if(f.is_open())
+    {
+        std::string line;
+        while(getline(f, line))
+            s.push_back(line);
+        f.close();
+    }
+    if(!s.empty())
+    {
+        Cli cli(&s[0]);
+        if(cli.getNumInfo())
+            Log(LogLevel::Debug)<<"Caller: "<<*cli.name();
+    }
     return app.exec();
 }
 
