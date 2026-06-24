@@ -10,6 +10,7 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(SQLite3 REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Multimedia)
+find_package(LibXml2 REQUIRED)
 
 include(FindPkgConfig)
 pkg_check_modules(CURLPP REQUIRED curlpp)
@@ -64,6 +65,7 @@ set_target_properties(appPhoneFront PROPERTIES
 target_link_libraries(appPhoneFront
     PRIVATE Qt6::Quick
     ${CURLPP_LDFLAGS}
+    LibXml2::LibXml2
 )
 target_link_libraries(appPhoneFront PRIVATE Qt6::Core)
 target_link_libraries(appPhoneFront PRIVATE SQLite::SQLite3)

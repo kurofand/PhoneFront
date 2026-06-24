@@ -20,17 +20,100 @@ bool Cli::getNumInfo()
         curlpp::Easy request;
         request.setOpt(curlpp::options::Url(url));
         request.setOpt(curlpp::options::HttpHeader(headers));
-
-        std::ostringstream os;
         request.perform();
-        os<<request;
-        std::cout<<os.str()<<std::endl;
+        ss<<request;
+
+        //std::cout<<ss.str()<<std::endl;
     }
-    catch(std::exception &e)
+    catch(const std::exception &e)
     {
         Log(LogLevel::Error)<<"Error on get request. Exception: ["<<e.what()<<"]";
         return false;
     }
 
+    auto *doc=htmlReadMemory(ss.str().c_str(), ss.str().length(), "", "UTF-8", HTML_PARSE_RECOVER);
+    if(!doc)
+    {
+        Log(LogLevel::Error)<<"Failed to get document instance from stream";
+        return false;
+    }
+
+    auto *root=xmlDocGetRootElement(doc);
+    if(!root)
+    {
+        Log(LogLevel::Error)<<"Failed to get root element";
+        xmlFreeDoc(doc);
+        xmlCleanupParser();
+        return false;
+    }
+
+    auto *node=findNode(root, "div", "id", "result-main-right");
+    if(!node)
+    {
+        Log(LogLevel::Error)<<"Failed to get node element: div, id: result-main-right";
+        xmlFree(node);
+        xmlFreeDoc(doc);
+        xmlCleanupParser();
+        return false;
+    }
+
+    node=findNode(node, "div", "class", "content");
+    if(!node)
+    {
+        Log(LogLevel::Error)<<"Failed to get node element: div, class: content";
+        xmlFreeDoc(doc);
+        xmlCleanupParser();
+        return false;
+    }
+
+    try
+    {
+        node=node->children->next->next->next;
+        auto *content=xmlNodeGetContent(node);
+        std::string name{reinterpret_cast<char*>(content)};
+        xmlFree(content);
+        std::cout<<name<<std::endl;
+    }
+    catch(const std::exception &e)
+    {
+        Log(LogLevel::Error)<<"Exception on getting node content. Exception: ["<<e.what()<<"]";
+        xmlFreeDoc(doc);
+        xmlCleanupParser();
+        return false;
+    }
+
+    xmlFreeDoc(doc);
+    xmlCleanupParser();
+
     return true;
+}
+
+xmlNode* Cli::findNode(xmlNode *node, const char* tag, const char* propName, const char* propVal)
+{
+    xmlNode *res=nullptr;
+
+    for(;node!=nullptr;node=node->next)
+    {
+        if(node->type==XML_ELEMENT_NODE)
+        {
+            if(!xmlStrcmp(node->name, (xmlChar*)tag))
+                if(propName&&propVal)
+                {
+                    auto *val=xmlGetProp(node, (xmlChar*)propName);
+                    if(val&&!xmlStrcmp(val, (xmlChar*)propVal))
+                    {
+                        xmlFree(val);
+                        return node;
+                    }
+                    xmlFree(val);
+                }
+                else
+                    return node;
+            res=findNode(node->children, tag, propName, propVal);
+            if(res)
+                break;
+        }
+    }
+
+    return res;
 }
