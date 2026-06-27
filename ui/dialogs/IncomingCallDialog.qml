@@ -33,6 +33,12 @@ Dialog
 		close();
 	}
 
+	function showCallerName(){tCaller.visible=true}
+
+	function setCallerName(val){tCaller.text=val}
+
+	function setCallerNumber(val){tIncomingNumber.text=val}
+
 	contentItem:
 		ColumnLayout
 	{
@@ -53,6 +59,16 @@ Dialog
 			font.pointSize: 20
 			color: activeTheme.mainFont
 			text: "080xxxx6256"
+		}
+		Text
+		{
+			id: tCaller
+			objectName: "tCaller"
+			Layout.alignment: Qt.AlignHCenter
+			font.pointSize: 15
+			color: activeTheme.mainFont
+			text: "searching..."
+			visible: false
 		}
 
 		Row

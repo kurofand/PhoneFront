@@ -166,4 +166,22 @@ ApplicationWindow
         dCall.number=num;
         dCall.open();
     }
+
+    function updateSignalStrengthVal(val)
+    {
+        if("signalStrength" in lContainer.item)
+            lContainer.item.signalStrength=val
+    }
+
+    function updateConnectionStatusVal(val)
+    {
+        if("connectionStatus" in lContainer.item)
+            lContainer.item.connectionStatus=val
+    }
+
+    function updateOperatorNameVal(val)
+    {
+        if("operatorName" in lContainer.item)
+            lContainer.item.operatorName=val
+    }
 }

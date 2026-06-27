@@ -7,8 +7,11 @@
 
 class Cli
 {
+
     public:
         Cli(const std::string *num): number(num){};
+        Cli(Cli&)=delete;
+        Cli(Cli&&)=delete;
         bool getNumInfo();
         std::string* name(){return &name_;}
 

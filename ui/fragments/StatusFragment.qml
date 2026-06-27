@@ -5,6 +5,15 @@ import "../components"
 
 ColumnLayout
 {
+	property int signalStrength
+	onSignalStrengthChanged:{tSignalStrength.text=signalStrength}
+
+	property string connectionStatus
+	onConnectionStatusChanged:{tConnectionStatus.text=connectionStatus}
+
+	property string operatorName
+	onOperatorNameChanged:{tOperator.text=operatorName}
+
 	spacing: 10
 
 	FragmentHeader{text: "Connection info"}

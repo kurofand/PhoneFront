@@ -2,9 +2,14 @@
 #include "maps.hpp"
 #include "../sound/player.hpp"
 #include "Log/log.hpp"
+#include "../cli/cli.hpp"
+#include "../qmlconnector.hpp"
+
+#include <QVariant>
 
 #include <sstream>
 #include <stdio.h>
+#include <thread>
 
 void Phone::requestNumber()
 {
@@ -146,12 +151,15 @@ void Phone::parseResponse(std::string &str)
 					break;
 				}
             Log(LogLevel::Debug)<<"OK, result: "<<signalStrength_;
-            auto *tSignalStrength=findQMLObj("tSignalStrength");
+			/*auto *tSignalStrength=findQMLObj("tSignalStrength");
             if(tSignalStrength)
-                tSignalStrength->setProperty("text", signalStrength_);
-            auto *root=findQMLObj("root");
-            if(root)
-                root->setProperty("updatingSignalStrength", false);
+				tSignalStrength->setProperty("text", signalStrength_);*/
+
+			auto *root=engine_->rootObjects().first();
+			/*if(root)
+				root->setProperty("updatingSignalStrength", false);*/
+			if(root)
+				QMetaObject::invokeMethod(root, "updateSignalStrengthVal", Q_ARG(QVariant, QVariant::fromValue(signalStrength_)));
 			break;
 		}
 		case ATResponse::CNUM:
@@ -175,9 +183,12 @@ void Phone::parseResponse(std::string &str)
 				arr[i++]=line;
             operatorName_=arr[2];
             Log(LogLevel::Debug)<<"OK, result: "<<operatorName_;
-            auto *tOperator=findQMLObj("tOperator");
+			/*auto *tOperator=findQMLObj("tOperator");
             if(tOperator)
-                tOperator->setProperty("text", operatorName_.c_str());
+				tOperator->setProperty("text", operatorName_.c_str());*/
+			auto *root=engine_->rootObjects().first();
+			if(root)
+				QMetaObject::invokeMethod(root, "updateOperatorNameVal", Q_ARG(QVariant, QVariant::fromValue(operatorName_)));
 			break;
 		}
 		case ATResponse::CREG:
@@ -193,9 +204,12 @@ void Phone::parseResponse(std::string &str)
 			{
                 status_=static_cast<ConnectionStatus>(responseStr[2]-'0');
                 Log(LogLevel::Debug)<<"OK, result: "<<connectionStatus.at(status_);
-                auto *tStatus=findQMLObj("tConnectionStatus");
+				/*auto *tStatus=findQMLObj("tConnectionStatus");
                 if(tStatus)
-                    tStatus->setProperty("text", connectionStatus.at(status_));
+					tStatus->setProperty("text", connectionStatus.at(status_));*/
+				auto *root=engine_->rootObjects().first();
+				if(root)
+					QMetaObject::invokeMethod(root, "updateConnectionStatusVal", Q_ARG(QVariant, QVariant::fromValue(connectionStatus.at(status_))));
 			}
             else
                 Log(LogLevel::Warning)<<"Unexpected length on CREG response, skip. Response: "<<responseStr;
@@ -290,20 +304,35 @@ void Phone::parseResponse(std::string &str)
                 removeNewLine(&responseStr);
                 currentCall_->number(responseStr);
                 std::string *number;
+                auto *dIncomingCall=findQMLObj("dIncomingCall");
+                if(!dIncomingCall)
+                {
+                    Log(LogLevel::Error)<<"Failed to find an incoming call dialog instance, break";
+                    break;
+                }
+                //if number in contacts show contact name(number)
                 if(contacts_->find(*currentCall_->number())!=contacts_->end())
                     *number=contacts_->at(*currentCall_->number())+"("+*currentCall_->number()+")";
+                //else try to get caller info from web
                 else
-                    number=currentCall_->number();
-                Log(LogLevel::Debug)<<"OK";
-                auto *dIncomingCall=findQMLObj("dIncomingCall");
-                if(dIncomingCall)
                 {
-                    auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
-                    tIncomingNumber->setProperty("text", number->c_str());
-                    QMetaObject::invokeMethod(dIncomingCall, "open");
-                    auto *player=Player::instance();
-                    player->ring();
+                    number=currentCall_->number();
+					QMetaObject::invokeMethod(dIncomingCall, "showCallerName");
+					std::thread tSearchCaller([dIncomingCall, number](){
+                        Cli cli(number);
+                        if(cli.getNumInfo())
+							QMetaObject::invokeMethod(dIncomingCall, "setCallerName", Q_ARG(QVariant, QVariant::fromValue(cli.name()->c_str())));
+                    });
+                    tSearchCaller.detach();
                 }
+                Log(LogLevel::Debug)<<"OK";
+
+				/*auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
+				tIncomingNumber->setProperty("text", number->c_str());*/
+				QMetaObject::invokeMethod(dIncomingCall, "setCallerNumber", Q_ARG(QVariant, QVariant::fromValue(number)));
+                QMetaObject::invokeMethod(dIncomingCall, "open");
+                auto *player=Player::instance();
+                player->ring();
 
                 std::string nBody="\"Incoming call from "+*number+"\"";
                 sendNotification(&nBody);
