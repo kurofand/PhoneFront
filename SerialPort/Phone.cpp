@@ -188,7 +188,7 @@ void Phone::parseResponse(std::string &str)
 				tOperator->setProperty("text", operatorName_.c_str());*/
 			auto *root=engine_->rootObjects().first();
 			if(root)
-				QMetaObject::invokeMethod(root, "updateOperatorNameVal", Q_ARG(QVariant, QVariant::fromValue(operatorName_)));
+				QMetaObject::invokeMethod(root, "updateOperatorNameVal", Q_ARG(QString, QString::fromStdString(operatorName_)));
 			break;
 		}
 		case ATResponse::CREG:
@@ -209,7 +209,7 @@ void Phone::parseResponse(std::string &str)
 					tStatus->setProperty("text", connectionStatus.at(status_));*/
 				auto *root=engine_->rootObjects().first();
 				if(root)
-					QMetaObject::invokeMethod(root, "updateConnectionStatusVal", Q_ARG(QVariant, QVariant::fromValue(connectionStatus.at(status_))));
+					QMetaObject::invokeMethod(root, "updateConnectionStatusVal", Q_ARG(QString, QString::fromUtf8(connectionStatus.at(status_))));
 			}
             else
                 Log(LogLevel::Warning)<<"Unexpected length on CREG response, skip. Response: "<<responseStr;
