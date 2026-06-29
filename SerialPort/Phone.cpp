@@ -25,7 +25,7 @@ void Phone::requestConnectionStatus()
 {
     auto *root=findQMLObj("root");
     if(root)
-        root->setProperty("updatingConnectionStatus", true);
+		QMetaObject::invokeMethod(root, "setUpdatingConnectionStatus", Q_ARG(QVariant, true));
 	port_->writeToPort("AT+CREG?\r\n");
 }
 
@@ -33,7 +33,7 @@ void Phone::requestSignalStrength()
 {
     auto *root=findQMLObj("root");
     if(root)
-        root->setProperty("updatingSignalStrength", true);
+		QMetaObject::invokeMethod(root, "setUpdatingSignalStrength", Q_ARG(QVariant, true));
 	port_->writeToPort("AT+CSQ\r\n");
 }
 
@@ -156,10 +156,12 @@ void Phone::parseResponse(std::string &str)
 				tSignalStrength->setProperty("text", signalStrength_);*/
 
 			auto *root=engine_->rootObjects().first();
-			/*if(root)
-				root->setProperty("updatingSignalStrength", false);*/
 			if(root)
+			{
+				QMetaObject::invokeMethod(root, "setUpdatingSignalStrength", Q_ARG(QVariant, false));
+				root=findQMLObj("root");
 				QMetaObject::invokeMethod(root, "updateSignalStrengthVal", Q_ARG(QVariant, QVariant::fromValue(signalStrength_)));
+			}
 			break;
 		}
 		case ATResponse::CNUM:
@@ -215,7 +217,7 @@ void Phone::parseResponse(std::string &str)
                 Log(LogLevel::Warning)<<"Unexpected length on CREG response, skip. Response: "<<responseStr;
             auto *root=findQMLObj("root");
             if(root)
-                root->setProperty("updatingConnectionStatus", false);
+				QMetaObject::invokeMethod(root, "setUpdatingConnectionStatus", Q_ARG(QVariant, false));
 			break;
 		}
 		case ATResponse::RING:
@@ -367,8 +369,8 @@ void Phone::parseResponse(std::string &str)
                 auto *dCall=findQMLObj("dCall");
                 if(dCall)
                 {
-                    dCall->setProperty("connected", true);
-                    dCall->setProperty("runTimer", true);
+					QMetaObject::invokeMethod(dCall, "setConnected", Q_ARG(QVariant, true));
+					QMetaObject::invokeMethod(dCall, "setRunTimer", Q_ARG(QVariant, true));
                 }
                 auto *player=Player::instance();
                 if(player->playing())

@@ -123,6 +123,7 @@ int main(int argc, char *argv[])
         for(auto const& [key, val]: queryRes->at(0))
         {
             std::string colorCode="#"+val;
+			//this setProperty is good cose called from main thread
             themeObj->setProperty(key.c_str(), colorCode.c_str());
         }
         delete queryRes;
@@ -132,7 +133,7 @@ int main(int argc, char *argv[])
     else
         Log(LogLevel::Error)<<"Error on opening port";
 //TODO: for ui tests, remove later
-    std::vector<std::string> s;
+	/*std::vector<std::string> s;
     std::fstream f;
     f.open("PhoneFront/testNumbers.txt");
     if(f.is_open())
@@ -147,7 +148,7 @@ int main(int argc, char *argv[])
         Cli cli(&s[0]);
         if(cli.getNumInfo())
             Log(LogLevel::Debug)<<"Caller: "<<*cli.name();
-    }
+	}*/
     return app.exec();
 }
 

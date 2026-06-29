@@ -40,6 +40,9 @@ ApplicationWindow
 
         property bool updatingConnectionStatus: false
         property bool updatingSignalStrength: false
+
+        function setUpdatingConnectionStatus(val){updatingConnectionStatus=val}
+        function setUpdatingSignalStrength(val){updatingSignalStrength=val}
     }
 
     RowLayout

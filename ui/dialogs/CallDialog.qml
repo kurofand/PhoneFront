@@ -22,6 +22,9 @@ Dialog
 	property bool runTimer: false
 	property bool connected: false
 
+	function setConnected(val){connected=val}
+	function setRunTimer(val){runTimer=val}
+
 	ColumnLayout
 	{
 		anchors.fill: parent
