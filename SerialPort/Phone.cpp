@@ -157,10 +157,11 @@ void Phone::parseResponse(std::string &str)
 
 			auto *root=engine_->rootObjects().first();
 			if(root)
-			{
+            {
+                QMetaObject::invokeMethod(root, "updateSignalStrengthVal", Q_ARG(QVariant, QVariant::fromValue(signalStrength_)));
+                root=findQMLObj("root");
 				QMetaObject::invokeMethod(root, "setUpdatingSignalStrength", Q_ARG(QVariant, false));
-				root=findQMLObj("root");
-				QMetaObject::invokeMethod(root, "updateSignalStrengthVal", Q_ARG(QVariant, QVariant::fromValue(signalStrength_)));
+
 			}
 			break;
 		}
