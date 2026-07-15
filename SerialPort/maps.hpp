@@ -17,7 +17,8 @@ std::unordered_map<std::string, ATResponse> responseMap=
     {"VOICE CALL",ATResponse::VOICE_CALL},
     {"MISSED_CALL",ATResponse::MISSED_CALL},
     {"+CMGS",ATResponse::CMGS},
-    {"+CMS ERROR",ATResponse::CMS_ERROR}
+	{"+CMS ERROR",ATResponse::CMS_ERROR},
+	{"+SMS FULL",ATResponse::SMS_FULL}
 };
 
 //Values from SIM7600 documentation

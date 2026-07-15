@@ -68,7 +68,9 @@ class SqliteClient
         inline static const char* fillSettingsSQL="INSERT INTO settings(name, val) VALUES"
                                                     "(\"Theme\", 1),"
                                                     "(\"Default ringtone\", \"\")";
-        inline static const char* queriesToExecute[]={fillThemesSQL, fillSettingsSQL};
+		//unique for avoid duplication after automated reading
+		inline static const char* makeSmsUnique="CREATE UNIQUE INDEX smsRow ON sms(datetime, number, msg);";
+		inline static const char* queriesToExecute[]={fillThemesSQL, fillSettingsSQL, makeSmsUnique};
 };
 
 #endif
