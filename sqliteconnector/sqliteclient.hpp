@@ -59,6 +59,9 @@ class SqliteClient
                                                      "name VARCHAR(50) NOT NULL,"
                                                      "val VARCHAR(100));";
 
+		inline static const char* blacklistTableSQL="CREATE TABLE blacklist(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+													  "number VARCHAR(20) NOT NULL);";
+
         inline static const char* tablesToCreate[]={smsTableSQL, callsTableSQL, contactsTableSQL, savedNumbersTableSQL, themesTableSQL, settingsTableSQL};
 
         //fill db with default vals
@@ -67,7 +70,9 @@ class SqliteClient
                                                   "(\"dark\", \"222222\", \"333333\",\"FFFFFF\", \"000000\", \"FFFFFF\");";
         inline static const char* fillSettingsSQL="INSERT INTO settings(name, val) VALUES"
                                                     "(\"Theme\", 1),"
-                                                    "(\"Default ringtone\", \"\")";
+													"(\"Default ringtone\", \"\"),"
+													"(\"Apply blacklist filter\", 0),"
+													"(\"Use contacts as white list\", 0)";
         inline static const char* queriesToExecute[]={fillThemesSQL, fillSettingsSQL};
 };
 
