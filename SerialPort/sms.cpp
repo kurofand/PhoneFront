@@ -115,6 +115,10 @@ void Sms::parse()
             strHexToDec(&val, currentPos);
             currVal=std::bitset<8>(val).to_string();
             currVal.append(prevVal.substr(0, iteration));
+			//faced issue with decoding otp sms from amazon - last character was 00000000 which became \000 and broke db inserting
+			//this is temp solution
+			if(currVal=="00000000")
+				continue;
             prevVal.erase(0, iteration);
             message_+=static_cast<char>(std::stoi(prevVal, nullptr, 2));
             prevVal=currVal;

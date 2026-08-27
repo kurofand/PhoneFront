@@ -41,6 +41,7 @@ enum class ATResponse
     CMGRD,
     CMGS,
     CMS_ERROR,
+	SMS_FULL,
 	UNKNOWN
 };
 

@@ -433,6 +433,15 @@ void Phone::parseResponse(std::string &str)
                 player->stop();
             break;
         }
+		//"internal sms storage is full" signal. force to read and delete all stored data
+		//data should not duplicate in db cose db rows are unique
+		case ATResponse::SMS_FULL:
+		{
+			Log(LogLevel::Debug)<<"SMS FULL signal";
+			for(unsigned i=0;i<=9;i++)
+				readAndDeleteMessage(std::to_string(i).c_str());
+			break;
+		}
         default:
         {
             Log(LogLevel::Debug)<<"Command without parsing rules, skipping...";
