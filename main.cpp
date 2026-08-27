@@ -33,6 +33,10 @@ void listen(Phone *phone)
             bool readNextLine=false;
             while(getline(sChunk, line, '\n'))
             {
+		//faced problem with '\r' in the string tail again
+		//since both patterns are possible split lines with '\n' and then pop back if there is '\r'
+                if(line.back()=='\r')
+                    line.pop_back();
                 //most responses start with + and contain only a single line
                 if(line[0]=='+'||
                     line.find("RING")!=std::string::npos||
@@ -103,11 +107,13 @@ int main(int argc, char *argv[])
         std::thread tListen(listen, phone);
         tListen.detach();
         phone->setVoiceHangupControl();
+        phone->setIdentification();
         phone->requestNumber();
         phone->requestSignalStrength();
         phone->requestConnectionStatus();
+	//there is a problem with heavy requests like COPS - all requests between heavy one request and response will be ignored
+	//so operator info must be called last
         phone->requestOperatorInfo();
-        phone->setIdentification();
         auto *dbClient=SqliteClient::instance();
         dbClient->connect();
         auto *queryRes=new std::vector<std::unordered_map<std::string, std::string>>();

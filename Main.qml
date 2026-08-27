@@ -11,7 +11,7 @@ import "./ui/fragments"
 ApplicationWindow
 {
     id:window
-    width: 450
+    width: 550
     height: 450
     visible: true
     //color: root.backgroundColor
