@@ -72,4 +72,12 @@ enum class CallType
     UNKNOWN
 };
 
+enum class SettingsDataType
+{
+	INT=0,
+	STRING,
+	BOOL,
+	UNKNOWN
+};
+
 #endif

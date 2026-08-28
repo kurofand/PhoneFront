@@ -8,8 +8,6 @@ Player::Player()
     player=new QMediaPlayer();
     output=new QAudioOutput();
     player->setAudioOutput(output);
-    //TODO: replace this and other hardcoded settings with user defined settings
-    player->setSource(QUrl::fromLocalFile(""));
     output->setVolume(1.0);
     Log(LogLevel::Debug)<<"Exit media player initialization";
 }
@@ -26,6 +24,24 @@ void Player::stop()
     player->stop();
     //reset loop setting
     player->setLoops(QMediaPlayer::Once);
+}
+
+//TODO:
+//think about load all sound files on init and play from memory
+void Player::file(const char* path)
+{
+	player->setSource(QUrl::fromLocalFile(path));
+}
+
+void Player::volume(float volume)
+{
+	output->setVolume(volume);
+}
+
+void Player::playOnce()
+{
+	player->setLoops(QMediaPlayer::Once);
+	player->play();
 }
 
 Player* Player::instance()

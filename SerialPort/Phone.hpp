@@ -7,6 +7,12 @@
 #include "sms.hpp"
 #include <qqmlapplicationengine.h>
 
+struct setting
+{
+	std::string val;
+	SettingsDataType type=SettingsDataType::UNKNOWN;
+};
+
 class Phone
 {
 	public:
@@ -31,6 +37,7 @@ class Phone
         void port(SerialPort *p){port_=p;}
         void engine(QQmlApplicationEngine *engine){engine_=engine;}
         void contacts(std::unordered_map<std::string, std::string> *c){contacts_=c;}
+		void settings(std::map<std::string, setting> *s){settings_=s;}
         std::unordered_map<std::string, std::string>* contacts(){return contacts_;}
 		SerialPort* port(){return port_;}
         //TODO: test this. maybe there are problems with status_ val
@@ -52,6 +59,7 @@ class Phone
 		uint8_t signalStrength_=0;
         //map for store contacts to replace number with name on incoming call/sms
         std::unordered_map<std::string, std::string> *contacts_=nullptr;
+		std::map<std::string, setting> *settings_=nullptr;
 
         QQmlApplicationEngine *engine_;
 

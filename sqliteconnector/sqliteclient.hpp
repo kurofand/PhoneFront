@@ -55,9 +55,12 @@ class SqliteClient
                                             "subFont CHARACTER(6) NOT NULL,"
                                             "separatorColor CHARACTER(6) NOT NULL);";
 
-        inline static const char* settingsTableSQL="CREATE TABLE settings(id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                                     "name VARCHAR(50) NOT NULL,"
-                                                     "val VARCHAR(100));";
+		//dType - data type for dynamic front. Types:
+		//int - integer, bool - boolean, str - string
+		inline static const char* settingsTableSQL="CREATE TABLE settings(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+													 "name VARCHAR(50) NOT NULL,"
+													 "dType CHARACTER(4) NOT NULL,"
+													 "val VARCHAR(100));";
 
         inline static const char* tablesToCreate[]={smsTableSQL, callsTableSQL, contactsTableSQL, savedNumbersTableSQL, themesTableSQL, settingsTableSQL};
 
@@ -65,9 +68,12 @@ class SqliteClient
         inline static const char* fillThemesSQL="INSERT INTO themes(name, mainBackground, btnBackground, mainFont, subFont, separatorColor) VALUES"
                                                   "(\"light\", \"F9F8F6\", \"E3E2E1\",\"000000\", \"FFFFFF\", \"000000\"),"
                                                   "(\"dark\", \"222222\", \"333333\",\"FFFFFF\", \"000000\", \"FFFFFF\");";
-        inline static const char* fillSettingsSQL="INSERT INTO settings(name, val) VALUES"
-                                                    "(\"Theme\", 1),"
-                                                    "(\"Default ringtone\", \"\")";
+		inline static const char* fillSettingsSQL="INSERT INTO settings(name, dType, val) VALUES"
+													"(\"Theme\", \"int\", 1),"
+													"(\"Default ringtone\", \"str\", \"\"),"
+													"(\"Default smstone\", \"str\", \"\"),"
+													"(\"Silent mode\", \"bool\", 0),"
+													"(\"Execute cli\", \"bool\", 0)";
 		//unique for avoid duplication after automated reading
 		inline static const char* makeSmsUnique="CREATE UNIQUE INDEX smsRow ON sms(datetime, number, msg);";
 		inline static const char* queriesToExecute[]={fillThemesSQL, fillSettingsSQL, makeSmsUnique};

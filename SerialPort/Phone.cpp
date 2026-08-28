@@ -317,7 +317,15 @@ void Phone::parseResponse(std::string &str)
                 if(contacts_->find(*currentCall_->number())!=contacts_->end())
                     *number=contacts_->at(*currentCall_->number())+"("+*currentCall_->number()+")";
                 //else try to get caller info from web
-                else
+				//if cli execution set up in settings
+				else if([](const std::map<std::string, setting> *settings)
+						 {
+							 if(settings==nullptr)
+								 return false;
+							 if(settings->find("Execute cli")!=settings->end())
+								 return settings->at("Execute cli").val=="1";
+							 else return false;
+						 }(settings_))
                 {
                     number=currentCall_->number();
 					QMetaObject::invokeMethod(dIncomingCall, "showCallerName");
@@ -334,8 +342,20 @@ void Phone::parseResponse(std::string &str)
 				tIncomingNumber->setProperty("text", number->c_str());*/
 				QMetaObject::invokeMethod(dIncomingCall, "setCallerNumber", Q_ARG(QVariant, QVariant::fromValue(number)));
                 QMetaObject::invokeMethod(dIncomingCall, "open");
-                auto *player=Player::instance();
-                player->ring();
+
+				bool silentMode=false;
+				if(settings_!=nullptr&&settings_->find("Silent mode")!=settings_->end())
+					silentMode=settings_->at("Silent mode").val=="1";
+
+				if(!silentMode)
+				{
+					if(settings_->find("Default ringtone")!=settings_->end()&&!settings_->at("Default ringtone").val.empty())
+					{
+						auto *player=Player::instance();
+						player->file(settings_->at("Default ringtone").val.c_str());
+						player->ring();
+					}
+				}
 
                 std::string nBody="\"Incoming call from "+*number+"\"";
                 sendNotification(&nBody);
@@ -407,6 +427,19 @@ void Phone::parseResponse(std::string &str)
                 number=sms.number();
             std::string nBody="\"New message from "+*number+"\"";
             sendNotification(&nBody);
+
+			//if settings set, silent mode in settings and it's off, ringtone for sms set and it's not empty
+			if(settings_!=nullptr&&settings_->find("Silent mode")!=settings_->end()&&settings_->at("Silent mode").val=="0"&&
+				settings_->find("Default smstone")!=settings_->end()&&!settings_->at("Default smstone").val.empty())
+			{
+				auto *player=Player::instance();
+				if(!player->playing())
+				{
+					player->file(settings_->at("Default smstone").val.c_str());
+					player->playOnce();
+				}
+			}
+
             sms.saveToDB();
             break;
         }
