@@ -307,6 +307,20 @@ void Phone::parseResponse(std::string &str)
                 removeNewLine(&responseStr);
                 currentCall_->number(responseStr);
                 std::string *number;
+				if(useBlackList_)
+				{
+					Log(LogLevel::Debug)<<"Black list is active, checking incoming number...";
+					if(blackList_==nullptr)
+						Log(LogLevel::Error)<<"Black list is null!";
+					if(blackList_!=nullptr&&std::find(blackList_->begin(), blackList_->end(), currentCall_->number()->data())==blackList_->end())
+					{
+						Log(LogLevel::Debug)<<"Number is in black list, send ATH signal";
+						disconnect();
+						break;
+					}
+					else
+						Log(LogLevel::Debug)<<"Number is not in black list";
+				}
                 auto *dIncomingCall=findQMLObj("dIncomingCall");
                 if(!dIncomingCall)
                 {

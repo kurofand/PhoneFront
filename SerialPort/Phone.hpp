@@ -31,6 +31,7 @@ class Phone
         void port(SerialPort *p){port_=p;}
         void engine(QQmlApplicationEngine *engine){engine_=engine;}
         void contacts(std::unordered_map<std::string, std::string> *c){contacts_=c;}
+		void blackList(std::vector<std::string> *vec){blackList_=vec;}
         std::unordered_map<std::string, std::string>* contacts(){return contacts_;}
 		SerialPort* port(){return port_;}
         //TODO: test this. maybe there are problems with status_ val
@@ -52,6 +53,8 @@ class Phone
 		uint8_t signalStrength_=0;
         //map for store contacts to replace number with name on incoming call/sms
         std::unordered_map<std::string, std::string> *contacts_=nullptr;
+		std::vector<std::string> *blackList_=nullptr;
+		bool useBlackList_=false;
 
         QQmlApplicationEngine *engine_;
 

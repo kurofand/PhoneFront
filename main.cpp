@@ -117,6 +117,15 @@ int main(int argc, char *argv[])
             contacts->insert(std::pair<std::string, std::string>{row.at("number"), row.at("name")});
 
         queryRes->clear();
+
+		//TODO: get the settings first and do not load list if setting set to false
+		auto *list=new std::vector<std::string>();
+		dbClient->executeQuery("SELECT number FROM blacklist ORDER BY number");
+		for(const auto &row: *queryRes)
+			list->push_back(row.at("number"));
+		phone->blackList(list);
+		queryRes->clear();
+
         auto *window=engine.rootObjects().first();
         auto *themeObj=window->findChild<QObject*>("activeTheme");
         dbClient->executeQuery("SELECT mainBackground, btnBackground, mainFont, subFont, separatorColor FROM themes INNER JOIN settings ON settings.val=themes.id WHERE settings.name=\"Theme\"", queryRes);
