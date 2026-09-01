@@ -11,6 +11,7 @@
 #include "SerialPort/Phone.hpp"
 #include "sqliteconnector/sqliteclient.cpp"
 #include "Log/log.hpp"
+#include "SerialPort/maps.hpp"
 
 #include "cli/cli.hpp"
 
@@ -132,9 +133,19 @@ int main(int argc, char *argv[])
 			//this setProperty is good cose called from main thread
             themeObj->setProperty(key.c_str(), colorCode.c_str());
         }
+		queryRes->clear();
+		dbClient->executeQuery("SELECT name, dType, val FROM settings", queryRes);
+		std::map<std::string, setting> *settings=new std::map<std::string, setting>();
+		for(const auto &row: *queryRes)
+		{
+			auto dType=dataTypeMap.find(row.at("dType").c_str())!=dataTypeMap.end()?dataTypeMap.at(row.at("dType").c_str()):SettingsDataType::UNKNOWN;
+			setting s{row.at("val"), dType};
+
+			settings->at(row.at("name"))=s;
+		}
         delete queryRes;
         phone->contacts(contacts);
-
+		phone->settings(settings);
     }
     else
         Log(LogLevel::Error)<<"Error on opening port";

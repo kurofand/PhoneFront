@@ -12,6 +12,9 @@ class Player
         static Player* instance();
         void ring();
         void stop();
+		void playOnce();
+		void file(const char* path);
+		void volume(float volume);
         const bool playing(){return player->playbackState()==QMediaPlayer::PlayingState;};
 
         ~Player();

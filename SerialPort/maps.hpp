@@ -3,7 +3,8 @@
 
 #include <unordered_map>
 
-std::unordered_map<std::string, ATResponse> responseMap=
+//not const bc too lazy to rewrite [] operator to at()
+inline std::unordered_map<std::string, ATResponse> responseMap=
 {
 	{"+COPS",ATResponse::COPS},
 	{"+CREG",ATResponse::CREG},
@@ -23,7 +24,7 @@ std::unordered_map<std::string, ATResponse> responseMap=
 
 //Values from SIM7600 documentation
 //https://simcom.ee/documents/SIM7600C/SIM7500_SIM7600%20Series_AT%20Command%20Manual_V1.01.pdf
-std::unordered_map<uint8_t, const char*> callNumberType=
+inline std::unordered_map<uint8_t, const char*> callNumberType=
 {
 	{128,"Restricted number type includes unknown type and format"},
 	{145,"International number type"},
@@ -32,7 +33,7 @@ std::unordered_map<uint8_t, const char*> callNumberType=
 	{129,"Otherwise"}
 };
 
-std::unordered_map<ConnectionStatus, const char*> connectionStatus=
+inline std::unordered_map<ConnectionStatus, const char*> connectionStatus=
 {
     {ConnectionStatus::NO_REG_NO_SEARCH,"Not registered, not currently searching a new operator"},
     {ConnectionStatus::REG,"Registered, home nerwork"},
@@ -40,6 +41,13 @@ std::unordered_map<ConnectionStatus, const char*> connectionStatus=
     {ConnectionStatus::REG_DECLINED,"Registration denied"},
     {ConnectionStatus::UNKNOWN,"Unknown"},
     {ConnectionStatus::ROAMING,"Roaming"}
+};
+
+inline std::unordered_map<const char*, SettingsDataType> dataTypeMap=
+{
+	{"int", SettingsDataType::INT},
+	{"str", SettingsDataType::STRING},
+	{"bool", SettingsDataType::BOOL}
 };
 
 #endif
