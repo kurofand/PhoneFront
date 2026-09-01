@@ -108,6 +108,7 @@ void Phone::sendVoiceMenuVal(char &&c)
 void Phone::parseResponse(std::string &str)
 {
     Log(LogLevel::Debug)<<"Message from the port, parsing...";
+	Log(LogLevel::Debug)<<"Message: ["<<str<<"]";
 	std::string commandKey;
 	std::string responseStr;
 //most common requests return value like "command: response"
@@ -119,7 +120,9 @@ void Phone::parseResponse(std::string &str)
 //also sometimes I got mirroring the request command in response
 //ex.: AT+CREG? returns +CREG\r\n+CREG: [0,1]
 //it is probably a reading problem, but I have no idea how to fix it in reading side
-        commandKey=commandKey.substr(commandKey.rfind("+"));
+//after switch reading logic to read line by line this case does not occur
+//but just in case leaving this as comment
+//        commandKey=commandKey.substr(commandKey.rfind("+"));
         responseStr=str.substr(delimiter+2);
 	}
 	else
