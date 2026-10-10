@@ -345,21 +345,26 @@ void Phone::parseResponse(std::string &str)
 				tIncomingNumber->setProperty("text", number->c_str());*/
 				QMetaObject::invokeMethod(dIncomingCall, "setCallerNumber", Q_ARG(QVariant, QVariant::fromValue(number)));
                 QMetaObject::invokeMethod(dIncomingCall, "open");
+				Log(LogLevel::Debug)<<"QML methods invoked";
 
 				bool silentMode=false;
 				if(settings_!=nullptr&&settings_->find("Silent mode")!=settings_->end())
 					silentMode=settings_->at("Silent mode").val=="1";
+				Log(LogLevel::Debug)<<"Settings loaded, silent mode set";
 
 				if(!silentMode)
 				{
 					if(settings_->find("Default ringtone")!=settings_->end()&&!settings_->at("Default ringtone").val.empty())
 					{
+						Log(LogLevel::Debug)<<"Ringtone setting found";
 						auto *player=Player::instance();
 						player->file(settings_->at("Default ringtone").val.c_str());
+						Log(LogLevel::Debug)<<"File set, ringing";
 						player->ring();
 					}
 				}
 
+				Log(LogLevel::Debug)<<"Sending notification";
                 std::string nBody="\"Incoming call from "+*number+"\"";
                 sendNotification(&nBody);
             }
