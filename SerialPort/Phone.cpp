@@ -309,7 +309,8 @@ void Phone::parseResponse(std::string &str)
                 Log(LogLevel::Debug)<<"Parsing number";
                 removeNewLine(&responseStr);
                 currentCall_->number(responseStr);
-                std::string *number;
+				std::string *pNumber;
+				std::string number;
                 auto *dIncomingCall=findQMLObj("dIncomingCall");
                 if(!dIncomingCall)
                 {
@@ -318,7 +319,10 @@ void Phone::parseResponse(std::string &str)
                 }
                 //if number in contacts show contact name(number)
                 if(contacts_->find(*currentCall_->number())!=contacts_->end())
-                    *number=contacts_->at(*currentCall_->number())+"("+*currentCall_->number()+")";
+				{
+					number=contacts_->at(*currentCall_->number())+"("+*currentCall_->number()+")";
+					pNumber=&number;
+				}
                 //else try to get caller info from web
 				//if cli execution set up in settings
 				else if([](const std::map<std::string, setting> *settings)
@@ -330,15 +334,17 @@ void Phone::parseResponse(std::string &str)
 							 else return false;
 						 }(settings_))
                 {
-                    number=currentCall_->number();
+					pNumber=currentCall_->number();
 					QMetaObject::invokeMethod(dIncomingCall, "showCallerName");
-					std::thread tSearchCaller([dIncomingCall, number](){
-                        Cli cli(number);
+					std::thread tSearchCaller([dIncomingCall, pNumber](){
+						Cli cli(pNumber);
                         if(cli.getNumInfo())
 							QMetaObject::invokeMethod(dIncomingCall, "setCallerName", Q_ARG(QVariant, QVariant::fromValue(cli.name()->c_str())));
                     });
                     tSearchCaller.detach();
                 }
+				else
+					pNumber=currentCall_->number();
                 Log(LogLevel::Debug)<<"OK";
 
 				/*auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
