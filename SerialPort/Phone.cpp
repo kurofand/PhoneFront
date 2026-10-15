@@ -349,7 +349,7 @@ void Phone::parseResponse(std::string &str)
 
 				/*auto *tIncomingNumber=dIncomingCall->findChild<QObject*>("tIncomingNumber");
 				tIncomingNumber->setProperty("text", number->c_str());*/
-				QMetaObject::invokeMethod(dIncomingCall, "setCallerNumber", Q_ARG(QVariant, QVariant::fromValue(number)));
+				QMetaObject::invokeMethod(dIncomingCall, "setCallerNumber", Q_ARG(QVariant, QVariant::fromValue(pNumber)));
                 QMetaObject::invokeMethod(dIncomingCall, "open");
 				Log(LogLevel::Debug)<<"QML methods invoked";
 
@@ -371,7 +371,7 @@ void Phone::parseResponse(std::string &str)
 				}
 
 				Log(LogLevel::Debug)<<"Sending notification";
-                std::string nBody="\"Incoming call from "+*number+"\"";
+				std::string nBody="\"Incoming call from "+*pNumber+"\"";
                 sendNotification(&nBody);
             }
 			break;
@@ -434,12 +434,16 @@ void Phone::parseResponse(std::string &str)
             std::string pduLine(responseStr.substr(newLine+1));
             Sms sms{&pduLine};
             sms.parse();
-            std::string *number;
+			std::string *pNumber;
+			std::string number;
             if(contacts_->find(*sms.number())!=contacts_->end())
-                *number=contacts_->at(*sms.number())+"("+*sms.number()+")";
+			{
+				number=contacts_->at(*sms.number())+"("+*sms.number()+")";
+				pNumber=&number;
+			}
             else
-                number=sms.number();
-            std::string nBody="\"New message from "+*number+"\"";
+				pNumber=sms.number();
+			std::string nBody="\"New message from "+*pNumber+"\"";
             sendNotification(&nBody);
 
 			//if settings set, silent mode in settings and it's off, ringtone for sms set and it's not empty
